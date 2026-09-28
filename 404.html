@@ -660,10 +660,14 @@ body.u2navoff .u2navpeek{pointer-events:auto;}
    폰 자판은 position:fixed 를 밀어 올려서, 그대로 두면 고르던 칩을 덮는다. */
 body.u2typing .u2tabs, body.u2typing .u2calc{display:none;}
 .u2calc{position:fixed;right:14px;bottom:calc(var(--navbase) + 12px);z-index:45;
-  transition:bottom .26s cubic-bezier(.4,0,.2,1);
+  transition:bottom .26s cubic-bezier(.4,0,.2,1),opacity .18s ease,transform .18s ease;
   width:58px;height:58px;border-radius:99px;background:var(--ink);color:var(--bg);
   display:grid;place-items:center;box-shadow:var(--sh2);}
 .u2calc svg{width:26px;height:26px;fill:currentColor;}
+/* 🔴 **내리는 동안엔 숨는다** (사장님 2026-09-28 : 계산기 단추가 「3개월 버틸 때」·「다 냈어」·「찾기」를 가린다 → A).
+   화면을 굴리는 동안 글자를 가리지 않게 살짝 내려가며 사라지고, 멈추면 0.6초 뒤 다시 선다.
+   ⛔ display:none 으로 하지 말 것 — 자리가 흔들린다. 누름만 막는다. */
+body.u2scrolling .u2calc{opacity:0;transform:translateY(14px);pointer-events:none;}
 /* bgm.js 가 이 단추를 눌러 소리를 켠다. 화면엔 안 보인다(설정에서 켠다). */
 /* 소리 켜고 끄기 — 톱니 바로 위. 그림은 bgm.js 가 넣어 준다 */
 .u2snd{margin-left:auto;width:44px;height:44px;border-radius:99px;background:var(--paper);
@@ -5357,6 +5361,7 @@ async function sheetTries() {
       「돈 내라」다. 막혔을 때만, 무엇이 막혔는지와 함께 말한다. */
 function payBar() {
   if (!못적나()) return '';
+  return '<div class="u2paybar"><div><b>산 계정의 파일을 불러오면 적을 수 있어</b><small>보기 · 고치기 · 지우기는 그대로 돼.</small></div><button data-keepload>불러오기</button></div>';   // 계속 쓰기판
   const l = (D || {}).lic || {};
   return '<div class="u2paybar"><div><b>지금은 새로 못 적어</b>'
     + '<small>보고 · 고치고 · 지우는 건 그대로 돼. '
@@ -7039,6 +7044,13 @@ sheet.onclick = (e) => { if (e.target === sheet) sheet.classList.remove('u2sheet
 $('#decoX').onclick = () => sheet.classList.remove('u2sheet-on');
 $('#setBtn').onclick = () => sheetSet();
 $('#calcBtn').onclick = () => sheetCalc();
+/* 계산기 단추 : 굴리는 동안 숨기기 (위 CSS body.u2scrolling 짝) */
+{ let 멈춤 = 0;
+  addEventListener('scroll', () => {
+    document.body.classList.add('u2scrolling');
+    clearTimeout(멈춤);
+    멈춤 = setTimeout(() => document.body.classList.remove('u2scrolling'), 600);
+  }, { passive: true }); }
 
 /* ══ 시작 ══════════════════════════════════════════════ */
 async function load(m) {
@@ -7059,7 +7071,7 @@ async function load(m) {
     }
     /* 로그인은 했는데 **아직 아무것도 없는 분**이면 예시로 채워 보여준다.
        ⛔ 한 줄이라도 적으셨거나 이용권이 있으면 그때부터는 **진짜 내 장부**다. 다시 안 돌아간다. */
-    if (!예시중 && 빈장부(D)) { 예시중 = true; D = await api('demo', { q: 'm=' + M }); }
+    if (false && !예시중 && 빈장부(D)) { 예시중 = true; D = await api('demo', { q: 'm=' + M }); }
     M = D.m || M;
     addDate = null; calOpen = false; cardOpen = -1; cardEtcOpen = -1;
     render();
@@ -7265,20 +7277,28 @@ if ('serviceWorker' in navigator) {
   }).catch(() => {});
 }
 </script>
-<script>/* 계속 쓰기판 안내 — 처음 한 번, 그리고 설정에서 다시 볼 수 있게 */
+<script>/* 계속 쓰기판 안내 — 처음 한 번만. ⛔ 짧게 (사장님 2026-09-28 : 「안내 폼이 너무 어렵게 되어 있어」) */
 (function(){
-  var 본 = false; try { 본 = localStorage.getItem('keepIntro') === '1'; } catch (e) {}
+  var 본 = false; try { 본 = localStorage.getItem('keepIntro2') === '1'; } catch (e) {}
   if (본) return;
   var 폰 = /iPhone|iPad|iPod/.test(navigator.userAgent), 홈 = (window.navigator.standalone === true) || matchMedia('(display-mode: standalone)').matches;
-  var el = document.createElement('div');
-  el.style.cssText = 'position:fixed;left:10px;right:10px;bottom:calc(env(safe-area-inset-bottom,0px) + 90px);z-index:58;background:var(--ink,#111);color:var(--paper,#fff);padding:16px;border-radius:14px;font-size:14px;line-height:1.6;box-shadow:0 8px 24px rgba(0,0,0,.3)';
-  el.innerHTML = '<b>계속 쓰기판이에요</b><br>적은 건 <b>이 기기 안에만</b> 저장돼요. 서버가 없어도 계속 쓸 수 있어요.'
-    + (폰 && !홈 ? '<br>📱 아이폰은 <b>공유 → 홈 화면에 추가</b>로 꼭 올려 두고 써 주세요. 안 그러면 사파리가 기록을 지울 수 있어요.' : '')
-    + '<br>폰을 바꿀 때를 위해 왼쪽 아래 <b>☁ 백업</b>에서 <b>구글 드라이브 자동 백업</b>을 켜 두거나, <b>카톡으로 보내 두세요.</b>'
-    + '<br>처음이라면 받아 둔 보관본을 <b>설정 → 통째로 챙겨 두기 → 파일에서 되살리기</b>로 불러오세요.'
-    + '<div style="text-align:right;margin-top:10px"><button style="background:var(--paper,#fff);color:var(--ink,#111);border:0;border-radius:10px;padding:8px 14px;font:inherit;font-weight:700">알겠어</button></div>';
-  el.querySelector('button').onclick = function(){ try { localStorage.setItem('keepIntro','1'); } catch (e) {} el.remove(); };
-  addEventListener('load', function(){ setTimeout(function(){ document.body.appendChild(el); }, 800); });
+  var 판 = document.createElement('div');
+  판.style.cssText = 'position:fixed;inset:0;z-index:69;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;padding:20px';
+  var 칸 = 'display:block;width:100%;border:0;border-radius:12px;padding:14px;font:700 16px/1.2 inherit;margin-top:8px';
+  판.innerHTML = '<div style="background:var(--paper,#fff);color:var(--ink,#111);border-radius:18px;padding:22px 20px;max-width:360px;width:100%;font-size:16px;line-height:1.6;text-align:center">'
+    + '<div style="font-size:20px;font-weight:700;margin-bottom:6px">계속 쓰기판이에요</div>'
+    + '<div>기록은 <b>이 폰 안에</b> 저장돼요.</div>'
+    + (폰 && !홈 ? '<div style="margin-top:8px">📱 먼저 <b>공유 → 홈 화면에 추가</b></div>' : '')
+    + '<button data-a="load" style="' + 칸 + ';margin-top:16px;background:var(--ink,#111);color:var(--paper,#fff)">받아 둔 파일 불러오기</button>'
+    + '<button data-a="ok" style="' + 칸 + ';background:transparent;color:var(--ink,#111);border:2px solid var(--ink,#111)">처음부터 쓸게</button>'
+    + '</div>';
+  판.onclick = function (e) {
+    var b = e.target.closest('button'); if (!b) return;
+    try { localStorage.setItem('keepIntro2','1'); } catch (x) {}
+    판.remove();
+    if (b.getAttribute('data-a') === 'load' && window.keepBackup) window.keepBackup.불러오기();
+  };
+  addEventListener('load', function(){ setTimeout(function(){ document.body.appendChild(판); }, 600); });
 })();
 </script>
 <script src="/keep-backup.js" defer></script>

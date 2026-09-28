@@ -136,7 +136,8 @@
       + '<div style="border:2px solid var(--ink,#111);border-radius:14px;padding:12px 14px;margin-bottom:10px"><b>카톡으로 보내 두기</b><br>'
       +   '<small>공유 창에서 카카오톡 → <b>나와의 채팅</b>을 고르면 보관본이 카톡에 남아.</small>'
       +   '<div style="margin-top:8px"><button data-k="kakao" style="width:100%">카톡으로 보내기</button></div></div>'
-      + '<div style="display:flex;gap:6px"><button data-k="file" style="flex:1">파일로 받기</button><button data-k="x" style="flex:1">닫기</button></div>'
+      + '<div style="display:flex;gap:6px"><button data-k="file" style="flex:1">파일로 받기</button><button data-k="load" style="flex:1">받아 둔 파일 불러오기</button></div>'
+      + '<div style="margin-top:6px"><button data-k="x" style="width:100%">닫기</button></div>'
       + '<div data-msg style="margin-top:10px;min-height:1.4em;color:var(--sub,#777)"></div></div>';
     판.querySelectorAll('button').forEach(function (b) { b.style.cssText += ';border:2px solid var(--ink,#111);background:var(--ink,#111);color:var(--paper,#fff);border-radius:10px;padding:10px 8px;font:700 14px inherit'; });
     var 말 = function (t) { 판.querySelector('[data-msg]').textContent = t; };
@@ -144,6 +145,7 @@
       var b = e.target.closest('button'); if (e.target === 판) return 판.remove(); if (!b) return;
       var k = b.getAttribute('data-k');
       if (k === 'x') return 판.remove();
+      if (k === 'load') { return 파일불러오기(말); }
       if (k === 'file') { 말('만드는 중…'); return 보관본().then(function (h) { 내려받기(h); 말('받았어. 파일을 안전한 곳(카톡 나와의 채팅 · 메일)에 옮겨 두면 더 좋아.'); }).catch(function (x) { 말(x.message); }); }
       if (k === 'kakao') { 말('여는 중…'); return 카톡().then(function (t) { 말(t); }).catch(function (x) { if (x && x.name === 'AbortError') 말('안 보냈어'); else 말(x.message); }); }
       if (k === 'drive-up') {
@@ -162,6 +164,21 @@
     };
     document.body.appendChild(판);
   }
+  /* 받아 둔 보관본 파일을 골라 불러온다 (앱 설정의 「파일에서 되살리기」와 같은 일 · 여기서 바로) */
+  function 파일불러오기(말) {
+    말 = 말 || function (t) { if (t) alert(t); };
+    var i = document.createElement('input'); i.type = 'file'; i.accept = '.html,text/html,.json,application/json';
+    i.onchange = function () {
+      var f = i.files && i.files[0]; if (!f) return;
+      f.text().then(function (html) {
+        if (!confirm('이 파일로 이 폰의 장부를 통째로 바꿀까? 지금 적힌 건 사라져.')) return 말('안 바꿨어');
+        return 되살리기(html).then(function () { 말('불러왔어 · 화면을 새로 여는 중…'); setTimeout(function () { location.reload(); }, 800); });
+      }).catch(function (x) { 말(x.message); });
+    };
+    i.click();
+  }
+  window.keepBackup = { 열기: 창, 불러오기: 파일불러오기 };
+  document.addEventListener('click', function (e) { if (e.target.closest && e.target.closest('[data-keepload]')) 파일불러오기(); });
   단추.onclick = 창;
   addEventListener('load', function () { document.body.appendChild(단추); 점(); });
 })();
