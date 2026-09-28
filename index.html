@@ -92,7 +92,7 @@ body.u2navoff{ --navbase:calc(8px + env(safe-area-inset-bottom)); }
 .u2card{background:var(--paper);border-radius:var(--r-card);box-shadow:var(--sh);padding:18px;margin-bottom:14px;}
 .u2title{font-family:var(--ff),var(--ffui);font-weight:800;font-size:21px;margin:22px 2px 10px;}
 .u2emo{font-family:'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif;font-weight:400;}
-.u2hand{font-family:'lb-gool',var(--ff);letter-spacing:.5px;}
+.u2hand{font-family:'lb-ahyoung',var(--ff);letter-spacing:.5px;}
 .u2head{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:4px;}
 .u2empty{text-align:center;color:var(--faint);padding:22px 6px;font-size:16px;}
 
@@ -159,9 +159,9 @@ body.u2navoff{ --navbase:calc(8px + env(safe-area-inset-bottom)); }
 
 .u2breathe{background:var(--paper);border-radius:20px;padding:16px 18px;margin-bottom:22px;
   box-shadow:var(--sh);}
-.u2breathe-a{font-family:'lb-gool',var(--ff);font-size:19px;color:var(--sub);letter-spacing:.5px;}
+.u2breathe-a{font-family:'lb-ahyoung',var(--ff);font-size:19px;color:var(--sub);letter-spacing:.5px;}
 .u2breathe-b{display:flex;align-items:center;gap:10px;
-  font-family:'lb-gool',var(--ff);font-size:33px;line-height:1.15;margin-top:2px;letter-spacing:.5px;}
+  font-family:'lb-ahyoung',var(--ff);font-size:33px;line-height:1.15;margin-top:2px;letter-spacing:.5px;}
 .u2breathe-s{color:var(--sub);font-size:16px;margin-top:6px;}
 .u2breathe-ar{width:22px;height:22px;flex:0 0 22px;margin-left:auto;
   fill:none;stroke:currentColor;stroke-width:2.8;opacity:.55;}
@@ -184,7 +184,7 @@ body.u2navoff{ --navbase:calc(8px + env(safe-area-inset-bottom)); }
 /* 몇 달을 버틸지 — 이 값이 하루 몫을 정한다 (지금 앱의 goal 과 같은 것) */
 .u2goal{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin:10px 2px 0;}
 .u2goal > span{color:var(--sub);font-size:15px;margin-right:2px;}
-.u2meal-say{margin:8px 2px 0;font-family:'lb-gool',var(--ff);font-size:19px;letter-spacing:.5px;color:var(--sub);}
+.u2meal-say{margin:8px 2px 0;font-family:'lb-ahyoung',var(--ff);font-size:19px;letter-spacing:.5px;color:var(--sub);}
 
 .u2fold-box{display:none;margin-top:8px;background:var(--ink);color:var(--bg);
   border-radius:var(--r-box);padding:16px;font-size:15px;line-height:1.7;}
@@ -432,14 +432,14 @@ body.u2navoff{ --navbase:calc(8px + env(safe-area-inset-bottom)); }
 .u2tr-r button{flex:0 0 auto;border:2px solid var(--line2);border-radius:99px;padding:7px 13px;
   font-size:16px;font-weight:800;color:var(--sub);background:var(--paper);}
 .u2praise{text-align:center;padding:24px 10px 8px;}
-.u2praise-a{font-family:'lb-gool',var(--ff);font-size:23px;letter-spacing:.5px;}
+.u2praise-a{font-family:'lb-ahyoung',var(--ff);font-size:23px;letter-spacing:.5px;}
 .u2praise-b{color:var(--sub);font-size:15px;margin-top:6px;}
 
 /* ── 도장판 ─────────────────────────────────────────────
    ⛔ 도장은 **크게 박힌다** (사장님 2026-09-08 : 「화면에서 크게 박히는 느낌 · 파티클도 터지고」).
       달력 칸 안에서 조그맣게 찍으면 「참은 하루」의 값어치가 안 산다. */
 .u2stamp-top{text-align:center;padding:4px 0 18px;}
-.u2stamp-top h2{font-family:'lb-gool',var(--ff);font-size:29px;line-height:1.25;letter-spacing:.5px;}
+.u2stamp-top h2{font-family:'lb-ahyoung',var(--ff);font-size:29px;line-height:1.25;letter-spacing:.5px;}
 .u2stamp-cnt{display:inline-block;margin-top:10px;background:var(--acc);color:var(--ink);
   border-radius:99px;padding:8px 18px;font-weight:800;font-size:17px;}
 .u2cal2{background:var(--paper);border-radius:var(--r-card);box-shadow:var(--sh);padding:14px;}
@@ -468,7 +468,7 @@ body.u2navoff{ --navbase:calc(8px + env(safe-area-inset-bottom)); }
 .u2bang{position:fixed;inset:0;z-index:80;pointer-events:none;display:grid;place-items:center;overflow:hidden;}
 .u2bang-seal{width:min(58vw,260px);aspect-ratio:1;color:var(--pop);filter:drop-shadow(0 10px 24px rgba(0,0,0,.28));}
 .u2bang-seal svg{width:100%;height:100%;}
-.u2bang-w{position:absolute;top:calc(50% + min(30vw,140px));font-family:'lb-gool',var(--ff);
+.u2bang-w{position:absolute;top:calc(50% + min(30vw,140px));font-family:'lb-ahyoung',var(--ff);
   font-size:40px;color:var(--pop);white-space:nowrap;}
 .u2bang-flash{position:absolute;inset:0;background:var(--acc);opacity:0;}
 .u2p{position:absolute;left:50%;top:50%;width:12px;height:12px;border-radius:3px;}
@@ -521,7 +521,7 @@ function 읽기(raw) {
 /* ── 적기 ─────────────────────────────────────────────
    ⛔ 드롭다운을 안 쓴다 (사장님 2026-09-08 : 「어떻게 냈나 이런거 무조건 버튼화」).
    ⛔ 달력도 브라우저 것을 안 쓴다 — 지금 앱과 같은 .datebtn/.cal 을 그린다. */
-.u2add h2{font-family:'lb-gool',var(--ff);font-size:29px;text-align:center;line-height:1.25;letter-spacing:.5px;}
+.u2add h2{font-family:'lb-ahyoung',var(--ff);font-size:29px;text-align:center;line-height:1.25;letter-spacing:.5px;}
 .u2add-ex{text-align:center;color:var(--faint);font-size:15px;margin:8px 0 16px;}
 /* 옮기는 것 알약 — 점선으로 갈라 보인다. ⛔ 색을 새로 만들지 않는다(테마 열한 벌에서 다 산다).
    ⛔ 고르면 여느 알약과 똑같이 먹색으로 채워진다 — 고른 뒤에까지 다르게 두면 「덜 고른 것」처럼 보인다. */
@@ -565,17 +565,17 @@ function 읽기(raw) {
 .u2reelfld .prodrow i{font-style:normal;font-size:22px;line-height:1;flex:0 0 auto;}
 .u2reelfld .prodrow span{font-size:14px;font-weight:700;background:var(--paper);border-radius:99px;
   padding:2px 9px;white-space:nowrap;}
-.u2reelfld .prodrow em{font-family:'lb-gool',var(--ff),var(--ffui);letter-spacing:.5px;
+.u2reelfld .prodrow em{font-family:'lb-ahyoung',var(--ff),var(--ffui);letter-spacing:.5px;
   font-size:21px;font-weight:800;color:var(--ink);}
 .u2reelfld .prodrow.sum{position:relative;margin-top:4px;padding:15px 18px;background:var(--paper);
   border:2px dashed var(--line2);border-radius:20px;}
-.u2reelfld .prodrow.sum b{font-family:'lb-gool',var(--ff),var(--ffui);font-size:19px;}
+.u2reelfld .prodrow.sum b{font-family:'lb-ahyoung',var(--ff),var(--ffui);font-size:19px;}
 .u2reelfld .prodrow.sum em{font-size:27px;}
 .u2reelfld .prodrow.sum em small{font-size:16px;margin-left:2px;}
 .u2reelfld .reelrule li{margin:0 0 8px;padding:11px 14px 11px 46px;border-radius:16px;
   background:color-mix(in srgb,var(--bg) 35%,var(--paper));font-size:16px;}
 .u2reelfld .reelrule li::before{left:13px;top:12px;
-  font-family:'lb-gool',var(--ff),var(--ffui);font-size:14px;}
+  font-family:'lb-ahyoung',var(--ff),var(--ffui);font-size:14px;}
 /* 설치창 띠 속칸 — app.css 의 .insreels .tx 와 같은 모양이되 이름만 안 겹치게 */
 .insreels .u2instx{flex:1;min-width:0;line-height:1.35;}
 .insreels .u2instx b{display:block;font-size:16.5px;font-weight:800;}
@@ -906,10 +906,10 @@ html, body{overscroll-behavior-y:contain;}
 .u2tk-early{display:inline-block;margin-bottom:6px;padding:3px 11px;border-radius:99px;
   background:var(--pop);color:var(--paper);font-size:14px;font-weight:800;}
 .u2tk-e{font-size:30px;line-height:1;}
-.u2tk-v{font-family:'lb-gool',var(--ff),var(--ffui);letter-spacing:.5px;font-weight:800;font-size:44px;line-height:1.15;margin-top:4px;color:var(--ink);}
+.u2tk-v{font-family:'lb-ahyoung',var(--ff),var(--ffui);letter-spacing:.5px;font-weight:800;font-size:44px;line-height:1.15;margin-top:4px;color:var(--ink);}
 .u2tk-v small{font-size:20px;margin-left:2px;}
 .u2tk-v s{display:block;font-size:17px;color:var(--faint);font-weight:600;}
-.u2tk-s{font-family:'lb-gool',var(--ff),var(--ffui);letter-spacing:.5px;font-size:18px;color:var(--sub);margin-top:4px;}
+.u2tk-s{font-family:'lb-ahyoung',var(--ff),var(--ffui);letter-spacing:.5px;font-size:18px;color:var(--sub);margin-top:4px;}
 .u2tk-keep{display:flex;gap:8px;align-items:flex-start;margin:0 2px 14px;padding:11px 13px;border-radius:16px;
   background:var(--bg);font-size:16px;line-height:1.5;color:var(--sub);}
 .u2tk-keep b{color:var(--ink);}
@@ -2915,9 +2915,9 @@ function 운영자띠() {
   const 날말 = (d) => d ? (+d.slice(5, 7)) + '월 ' + (+d.slice(8)) + '일' : '';
   el.innerHTML = '<div style="flex:1"><b>' + (o.종료됨 ? '서비스를 마쳤어요' : o.급함 ? '자료를 지금 챙겨 두세요' : '자료를 한 번 챙겨 두시겠어요?') + '</b><br>'
     + (o.종료됨
-      ? '운영자가 오래 돌아오지 못해 약관대로 서비스를 마쳤어요. <b>파일로 받아서 계속 쓰기판(igp-keep.vercel.app)에 불러오면</b> 전처럼 계속 적으실 수 있어요.'
+      ? '운영자가 오래 돌아오지 못해 약관대로 서비스를 마쳤어요. <b>파일로 받아서 계속 쓰기판(eelishalee.github.io)에 불러오면</b> 전처럼 계속 적으실 수 있어요.'
       : '운영자가 <b>' + o.지난날 + '일째</b> 들어오지 않고 있어요. '
-        + (o.급함 ? '이대로면 <b>' + 날말(o.종료일) + '</b>에 서비스를 마쳐요. 지금 <b>파일로 받아 두시고</b>, 그 파일을 <b>계속 쓰기판(igp-keep.vercel.app)</b>에 불러오면 그대로 계속 쓰실 수 있어요.'
+        + (o.급함 ? '이대로면 <b>' + 날말(o.종료일) + '</b>에 서비스를 마쳐요. 지금 <b>파일로 받아 두시고</b>, 그 파일을 <b>계속 쓰기판(eelishalee.github.io)</b>에 불러오면 그대로 계속 쓰실 수 있어요.'
           : '별일 아닐 수 있지만, 받아 두시면 마음이 놓여요.'))
     + '</div><button type="button" data-owner-get style="flex:none;background:var(--paper);color:var(--ink);border:0;border-radius:10px;padding:10px 12px;font:inherit;font-weight:700">파일로 받기</button>'
     + (o.급함 ? '' : '<button type="button" data-owner-x aria-label="닫기" style="flex:none;background:none;border:0;color:var(--paper);font-size:18px">✕</button>');
