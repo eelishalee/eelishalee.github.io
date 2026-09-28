@@ -1,0 +1,210 @@
+[
+  {
+    "id": "free",
+    "name": "프리젠테이션",
+    "hint": "또박또박 · 기본",
+    "owner": "피티앤",
+    "lic": "SIL OFL 1.1",
+    "base": true,
+    "faces": [
+      {
+        "w": 500,
+        "f": "free-500.woff2"
+      },
+      {
+        "w": 700,
+        "f": "free-700.woff2"
+      },
+      {
+        "w": 800,
+        "f": "free-800.woff2"
+      }
+    ],
+    "kb": 426
+  },
+  {
+    "id": "gool",
+    "name": "HS굴토끼",
+    "hint": "동글동글 · 아기자기",
+    "owner": "토끼네활자공장",
+    "lic": "SIL OFL",
+    "base": true,
+    "faces": [
+      {
+        "w": 400,
+        "f": "gooltokki.woff2"
+      },
+      {
+        "w": 700,
+        "f": "gooltokki.woff2"
+      }
+    ],
+    "kb": 147
+  },
+  {
+    "id": "kedu",
+    "name": "케리스 케듀",
+    "hint": "교과서처럼 반듯",
+    "owner": "한국교육학술정보원",
+    "lic": "SIL OFL",
+    "base": true,
+    "faces": [
+      {
+        "w": 400,
+        "f": "kedu-400.woff2"
+      },
+      {
+        "w": 700,
+        "f": "kedu-700.woff2"
+      }
+    ],
+    "kb": 247
+  },
+  {
+    "id": "konkon",
+    "name": "온글잎 콘콘",
+    "hint": "노트에 쓴 손글씨",
+    "owner": "보이저엑스 · 김지현",
+    "lic": "임베딩 허용",
+    "faces": [
+      {
+        "w": 400,
+        "f": "onkonkon.woff2"
+      },
+      {
+        "w": 700,
+        "f": "onkonkon.woff2"
+      }
+    ],
+    "kb": 842
+  },
+  {
+    "id": "coco",
+    "name": "코코초이툰",
+    "hint": "만화 말풍선 느낌",
+    "owner": "타이비",
+    "lic": "임베딩 허용",
+    "faces": [
+      {
+        "w": 400,
+        "f": "coco.woff2"
+      },
+      {
+        "w": 700,
+        "f": "coco.woff2"
+      }
+    ],
+    "kb": 616
+  },
+  {
+    "id": "ahyoung",
+    "name": "아영의 손글씨",
+    "hint": "연필로 쓴 듯",
+    "owner": "타이비",
+    "lic": "임베딩 허용",
+    "faces": [
+      {
+        "w": 400,
+        "f": "ahyoung.woff2"
+      },
+      {
+        "w": 700,
+        "f": "ahyoung.woff2"
+      }
+    ],
+    "kb": 807
+  },
+  {
+    "id": "yclover",
+    "name": "Y클로버",
+    "hint": "말랑한 둥근 고딕",
+    "owner": "KT",
+    "lic": "임베딩 허용 · 로고 사용 금지",
+    "faces": [
+      {
+        "w": 400,
+        "f": "yclover-400.woff2"
+      },
+      {
+        "w": 700,
+        "f": "yclover-700.woff2"
+      }
+    ],
+    "kb": 736
+  },
+  {
+    "id": "gwteun",
+    "name": "강원교육 튼튼",
+    "hint": "굵고 씩씩하게",
+    "owner": "강원도교육청",
+    "lic": "공공누리 1유형",
+    "credit": "강원도교육청",
+    "faces": [
+      {
+        "w": 400,
+        "f": "gw-teunteun.woff2"
+      },
+      {
+        "w": 700,
+        "f": "gw-teunteun.woff2"
+      }
+    ],
+    "kb": 160
+  },
+  {
+    "id": "gwhyun",
+    "name": "강원교육 현옥샘",
+    "hint": "선생님 판서체",
+    "owner": "강원도교육청",
+    "lic": "공공누리 1유형",
+    "credit": "강원도교육청",
+    "faces": [
+      {
+        "w": 400,
+        "f": "gw-hyunok.woff2"
+      },
+      {
+        "w": 700,
+        "f": "gw-hyunok.woff2"
+      }
+    ],
+    "kb": 210
+  },
+  {
+    "id": "cherry",
+    "name": "체리 한 스푼",
+    "hint": "말랑한 손글씨",
+    "owner": "타이비",
+    "lic": "임베딩 허용",
+    "faces": [
+      {
+        "w": 400,
+        "f": "cherry.woff2"
+      },
+      {
+        "w": 700,
+        "f": "cherry.woff2"
+      }
+    ],
+    "kb": 622
+  },
+  {
+    "id": "wildgag",
+    "name": "와일드각",
+    "hint": "큼직하고 시원하게",
+    "owner": "김씨폰트공방",
+    "lic": "임베딩 허용 · 출처 표기 권장",
+    "credit": "김씨폰트공방",
+    "faces": [
+      {
+        "w": 400,
+        "f": "wildgag.woff2"
+      },
+      {
+        "w": 700,
+        "f": "wildgag.woff2"
+      }
+    ],
+    "kb": 128
+  }
+]
