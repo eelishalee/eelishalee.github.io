@@ -113,7 +113,8 @@
   /* ── 화면 : 떠 있는 「백업」 단추 + 창 ── */
   var 단추 = document.createElement('button');
   단추.type = 'button'; 단추.id = 'keepBackupBtn'; 단추.textContent = '☁ 백업';
-  단추.style.cssText = 'position:fixed;left:12px;bottom:calc(env(safe-area-inset-bottom,0px) + 96px);z-index:57;border:2px solid var(--ink,#111);background:var(--paper,#fff);color:var(--ink,#111);border-radius:999px;padding:8px 14px;font:700 14px/1 inherit;box-shadow:0 4px 14px rgba(0,0,0,.15)';
+  /* ⛔ 떠 있는 단추로 두지 않는다 — 메모 칸·계산기에 겹쳤다(사장님 2026-09-28). 맨 위 줄(로고 줄) 음악 단추 옆에 붙인다 */
+  단추.style.cssText = 'margin-left:auto;flex:none;border:2px solid var(--ink,#111);background:var(--paper,#fff);color:var(--ink,#111);border-radius:999px;padding:7px 12px;font:700 13px/1 inherit';
   function 점() {
     var 마지막 = ls.get('keepLastBackup'), 오래 = !마지막 || (Date.now() - Date.parse(마지막)) > 30 * 864e5;
     var 밀림 = ls.get('keepPending') && ls.get('keepDrive') && !열쇠있나();
@@ -180,5 +181,11 @@
   window.keepBackup = { 열기: 창, 불러오기: 파일불러오기 };
   document.addEventListener('click', function (e) { if (e.target.closest && e.target.closest('[data-keepload]')) 파일불러오기(); });
   단추.onclick = 창;
-  addEventListener('load', function () { document.body.appendChild(단추); 점(); });
+  function 붙이기() {
+    var 음악 = document.getElementById('btnBgm'), 줄 = 음악 && 음악.parentNode;
+    if (줄) { 줄.insertBefore(단추, 음악); 음악.style.marginLeft = '6px'; }
+    else { 단추.style.cssText += ';position:fixed;top:calc(env(safe-area-inset-top,0px) + 10px);right:12px;z-index:57'; document.body.appendChild(단추); }
+    점();
+  }
+  addEventListener('load', 붙이기);
 })();
