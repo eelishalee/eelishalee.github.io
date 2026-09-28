@@ -2182,6 +2182,10 @@
   init_define_KEEP_PRECACHE();
   init_define_KEEP_PUBKEY();
 
+  // keep/engine-core.js
+  init_define_KEEP_PRECACHE();
+  init_define_KEEP_PUBKEY();
+
   // api/ledger.js
   init_define_KEEP_PRECACHE();
   init_define_KEEP_PUBKEY();
@@ -5315,41 +5319,7 @@ h4{font-size:17px;font-weight:800;margin:22px 0 2px;}
     }
   }
 
-  // keep/sw-entry.js
-  var \uD310 = "d5318c35c3d5";
-  var \uB2F4\uC744\uAC83 = define_KEEP_PRECACHE_default;
-  var \uD1B5 = "igp-keep-" + \uD310;
-  self.addEventListener("install", (e) => {
-    e.waitUntil(caches.open(\uD1B5).then((c) => c.addAll(\uB2F4\uC744\uAC83)).then(() => self.skipWaiting()));
-  });
-  self.addEventListener("activate", (e) => {
-    e.waitUntil((async () => {
-      for (const k of await caches.keys()) if (k !== \uD1B5) await caches.delete(k);
-      await self.clients.claim();
-    })());
-  });
-  function \uD30C\uC77C\uB85C(p) {
-    if (p === "/" || p === "/ui2" || p === "/index" || p === "/landing") return "/index.html";
-    if (p === "/terms" || p === "/privacy") return p + ".html";
-    return p;
-  }
-  self.addEventListener("fetch", (e) => {
-    const u = new URL(e.request.url);
-    if (u.origin !== self.location.origin) return;
-    if (u.pathname.startsWith("/api/")) {
-      e.respondWith(\uC11C\uBC84(e.request, u));
-      return;
-    }
-    e.respondWith((async () => {
-      const \uB2F4\uAE34 = await caches.match(\uD30C\uC77C\uB85C(u.pathname), { ignoreSearch: true, cacheName: \uD1B5 });
-      if (\uB2F4\uAE34) return \uB2F4\uAE34;
-      try {
-        return await fetch(e.request);
-      } catch (x) {
-        return await caches.match("/index.html", { cacheName: \uD1B5 }) || Response.error();
-      }
-    })());
-  });
+  // keep/engine-core.js
   function \uC751\uB2F5\uD2C0() {
     const r = { code: 200, headers: { "Content-Type": "application/json; charset=utf-8" }, body: "" };
     const res = {
@@ -5378,7 +5348,13 @@ h4{font-size:17px;font-weight:800;margin:22px 0 2px;}
     return { r, res };
   }
   var json = (o, code = 200) => new Response(JSON.stringify(o), { status: code, headers: { "Content-Type": "application/json; charset=utf-8" } });
-  async function \uC11C\uBC84(request, u) {
+  async function \uBD80\uB974\uAE30(method, query, body, u) {
+    const { r: \uACB0\uACFC, res } = \uC751\uB2F5\uD2C0();
+    const req = { method, query, body, headers: { host: u ? u.host : "localhost", "x-forwarded-proto": u ? u.protocol.replace(":", "") : "https" } };
+    await handler(req, res);
+    return \uACB0\uACFC;
+  }
+  async function \uCC98\uB9AC(request, u, \uC635\uC158 = {}) {
     const \uC774\uB984 = u.pathname.replace(/^\/api\//, "").replace(/\.js$/, "");
     const query = Object.fromEntries(u.searchParams.entries());
     const r = String(query.r || "").toLowerCase();
@@ -5394,20 +5370,19 @@ h4{font-size:17px;font-weight:800;margin:22px 0 2px;}
     if (\uC774\uB984 === "pay") {
       if (r === "price") return json({ ok: true, price: 15e3, list: 15e3, early: false, earlyLeft: 0, max: 0 });
       if (r === "state" || r === "recover") return json({ ok: true, lic: licView(await licOf()), pay: { on: false, why: "keep" } });
-      return json({ ok: false, err: "\uACC4\uC18D \uC4F0\uAE30\uD310\uC5D0\uC11C\uB294 \uACB0\uC81C\uAC00 \uC5C6\uC5B4\uC694. \uC774\uC6A9\uAD8C\uC744 \uC0B0 \uACC4\uC815\uC758 \uBCF4\uAD00\uBCF8\uC744 \uBD88\uB7EC\uC640 \uC8FC\uC138\uC694." }, 400);
+      return json({ ok: false, err: "\uC9C0\uAE08\uC740 \uACB0\uC81C\uB97C \uD560 \uC218 \uC5C6\uC5B4\uC694." }, 400);
     }
-    if (\uC774\uB984 !== "ledger") return json({ ok: false, err: "\uACC4\uC18D \uC4F0\uAE30\uD310\uC5D0 \uC5C6\uB294 \uAE30\uB2A5\uC774\uC5D0\uC694." }, 404);
+    if (\uC774\uB984 !== "ledger") return json({ ok: false, err: "\uC9C0\uAE08\uC740 \uC4F8 \uC218 \uC5C6\uB294 \uAE30\uB2A5\uC774\uC5D0\uC694." }, 404);
     if (r === "restore" && body && body.\uC774\uC6A9\uAD8C) {
       const p = await \uB3C4\uC7A5\uD655\uC778(body.\uC774\uC6A9\uAD8C);
       if (p) await set(\uB3C4\uC7A5\uC790\uB9AC, { token: body.\uC774\uC6A9\uAD8C, at: (/* @__PURE__ */ new Date()).toISOString() });
     }
     const \uB3C4\uC7A52 = r === "dump" ? await get(\uB3C4\uC7A5\uC790\uB9AC) : null;
-    const { r: \uACB0\uACFC, res } = \uC751\uB2F5\uD2C0();
-    const req = { method: request.method, query, body, headers: { host: u.host, "x-forwarded-proto": u.protocol.replace(":", "") } };
+    let \uACB0\uACFC;
     try {
-      await handler(req, res);
+      \uACB0\uACFC = await \uBD80\uB974\uAE30(request.method, query, body, u);
     } catch (e) {
-      return json({ ok: false, err: e && e.message || "\uACC4\uC18D \uC4F0\uAE30\uD310\uC5D0\uC11C \uBB38\uC81C\uAC00 \uC0DD\uACBC\uC5B4\uC694" }, 500);
+      return json({ ok: false, err: e && e.message || "\uAE30\uAE30 \uC548 \uC7A5\uBD80\uC5D0\uC11C \uBB38\uC81C\uAC00 \uC0DD\uACBC\uC5B4\uC694" }, 500);
     }
     if (\uACB0\uACFC.code === 402) \uACB0\uACFC.code = 403;
     if (\uB3C4\uC7A52 && \uB3C4\uC7A52.token && \uACB0\uACFC.code === 200) {
@@ -5430,10 +5405,56 @@ h4{font-size:17px;font-weight:800;margin:22px 0 2px;}
         });
       }
     }
-    if (request.method !== "GET" && \uACB0\uACFC.code === 200 && r !== "restore") {
+    if (\uC635\uC158.\uB85C\uCEEC\uD45C\uC2DC && \uACB0\uACFC.code === 200 && /json/.test(\uACB0\uACFC.headers["Content-Type"])) {
+      try {
+        const o = JSON.parse(\uACB0\uACFC.body);
+        if (o && typeof o === "object" && (o.tx || o.m)) {
+          o.\uB85C\uCEEC = \uC635\uC158.\uB85C\uCEEC\uD45C\uC2DC;
+          \uACB0\uACFC.body = JSON.stringify(o);
+        }
+      } catch (e) {
+      }
+    }
+    if (\uC635\uC158.\uC54C\uB9AC\uAE30 && request.method !== "GET" && \uACB0\uACFC.code === 200 && r !== "restore") {
       self.clients.matchAll({ type: "window" }).then((cs) => cs.forEach((c) => c.postMessage({ type: "keep-changed" }))).catch(() => {
       });
     }
     return new Response(\uACB0\uACFC.body, { status: \uACB0\uACFC.code, headers: \uACB0\uACFC.headers });
   }
+
+  // keep/sw-entry.js
+  var \uD310 = "e0ca9b7c7b37";
+  var \uB2F4\uC744\uAC83 = define_KEEP_PRECACHE_default;
+  var \uD1B5 = "igp-keep-" + \uD310;
+  self.addEventListener("install", (e) => {
+    e.waitUntil(caches.open(\uD1B5).then((c) => c.addAll(\uB2F4\uC744\uAC83)).then(() => self.skipWaiting()));
+  });
+  self.addEventListener("activate", (e) => {
+    e.waitUntil((async () => {
+      for (const k of await caches.keys()) if (k !== \uD1B5) await caches.delete(k);
+      await self.clients.claim();
+    })());
+  });
+  function \uD30C\uC77C\uB85C(p) {
+    if (p === "/" || p === "/ui2" || p === "/index" || p === "/landing") return "/index.html";
+    if (p === "/terms" || p === "/privacy") return p + ".html";
+    return p;
+  }
+  self.addEventListener("fetch", (e) => {
+    const u = new URL(e.request.url);
+    if (u.origin !== self.location.origin) return;
+    if (u.pathname.startsWith("/api/")) {
+      e.respondWith(\uCC98\uB9AC(e.request, u, { \uC54C\uB9AC\uAE30: true }));
+      return;
+    }
+    e.respondWith((async () => {
+      const \uB2F4\uAE34 = await caches.match(\uD30C\uC77C\uB85C(u.pathname), { ignoreSearch: true, cacheName: \uD1B5 });
+      if (\uB2F4\uAE34) return \uB2F4\uAE34;
+      try {
+        return await fetch(e.request);
+      } catch (x) {
+        return await caches.match("/index.html", { cacheName: \uD1B5 }) || Response.error();
+      }
+    })());
+  });
 })();

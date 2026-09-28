@@ -2958,11 +2958,32 @@ function 약관알림() {
   el.querySelector('[data-terms-x]').onclick = () => { try { localStorage.setItem('u2notice', 약관개정.id); } catch (e) {} el.remove(); };
 }
 
+/* 기기 안 사본으로 도는 중 (sw.js 「기기 안 사본」 · 2026-09-28 사장님 결정 B) — 서버 대신 이 폰의 사본을 보여 줄 때만 뜬다.
+   '잠깐'   : 인터넷(또는 서버)이 잠깐 안 돼서 마지막 사본을 **보여만** 준다. 연결되면 저절로 사라진다.
+   '서버없음'·'종료' : 서버가 멈춰서 이 폰 안의 사본으로 **계속 쓰는** 중이다. */
+function 로컬띠() {
+  const 뜻 = D && D.로컬;
+  const old = document.getElementById('u2local');
+  if (!뜻 || DEMO) { if (old) old.remove(); return; }
+  const 글 = 뜻 === '잠깐'
+    ? '인터넷이 끊겨서 <b>마지막으로 받아 둔 기록</b>을 보여 주고 있어요. 연결되면 다시 적을 수 있어요.'
+    : '서버가 멈춰서 <b>이 폰 안의 기록</b>으로 계속 쓰고 있어요. 적은 건 이 폰에 저장돼요.';
+  if (old && old.dataset.k === 뜻) return;
+  if (old) old.remove();
+  const el = document.createElement('div');
+  el.id = 'u2local'; el.dataset.k = 뜻;
+  el.style.cssText = 'margin:0 0 10px;padding:10px 14px;border-radius:12px;background:var(--ink);color:var(--paper);font-size:13px;line-height:1.5';
+  el.innerHTML = 글;
+  const 자리 = document.querySelector('.u2view.u2view-on') || document.body;
+  자리.insertBefore(el, 자리.firstChild);
+}
+
 function render() {
   if (!D) return;
   효과다시();
   그린D = D;
   try { 운영자띠(); } catch (e) {}
+  setTimeout(() => { try { 로컬띠(); } catch (e) {} }, 0);
   /* 계속 쓰기판 : 약관 알림 없음 */
   const c = calc(D);
   $('#monLabel').textContent = M.slice(0, 4) + '년 ' + (+M.slice(5, 7)) + '월';
