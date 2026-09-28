@@ -32,7 +32,7 @@
   var define_KEEP_PRECACHE_default;
   var init_define_KEEP_PRECACHE = __esm({
     "<define:__KEEP_PRECACHE__>"() {
-      define_KEEP_PRECACHE_default = ["/", "/app.css", "/assets/bgm/grace-on-my-way-lite.mp3", "/assets/bgm/grace-on-my-way.mp3", "/assets/fonts/ahyoung.woff2", "/assets/fonts/cherry.woff2", "/assets/fonts/coco.woff2", "/assets/fonts/fonts.json", "/assets/fonts/free-500.woff2", "/assets/fonts/free-700.woff2", "/assets/fonts/free-800.woff2", "/assets/fonts/gooltokki.woff2", "/assets/fonts/gw-hyunok.woff2", "/assets/fonts/gw-teunteun.woff2", "/assets/fonts/kedu-400.woff2", "/assets/fonts/kedu-700.woff2", "/assets/fonts/onkonkon.woff2", "/assets/fonts/pre-400.woff2", "/assets/fonts/pre-600.woff2", "/assets/fonts/pre-700.woff2", "/assets/fonts/wildgag.woff2", "/assets/fonts/wonju-b.woff2", "/assets/fonts/yclover-400.woff2", "/assets/fonts/yclover-700.woff2", "/assets/icon-128.png", "/assets/icon-180.png", "/assets/icon-192.png", "/assets/icon-512.png", "/assets/icon.svg", "/assets/og-card.png", "/assets/og.png", "/bgm.js", "/calc.js", "/index.html", "/manifest.webmanifest", "/palettes.js", "/patterns.js", "/privacy.html", "/terms.html"];
+      define_KEEP_PRECACHE_default = ["/", "/app.css", "/assets/bgm/grace-on-my-way-lite.mp3", "/assets/bgm/grace-on-my-way.mp3", "/assets/fonts/ahyoung.woff2", "/assets/fonts/cherry.woff2", "/assets/fonts/coco.woff2", "/assets/fonts/fonts.json", "/assets/fonts/free-500.woff2", "/assets/fonts/free-700.woff2", "/assets/fonts/free-800.woff2", "/assets/fonts/gooltokki.woff2", "/assets/fonts/gw-hyunok.woff2", "/assets/fonts/gw-teunteun.woff2", "/assets/fonts/kedu-400.woff2", "/assets/fonts/kedu-700.woff2", "/assets/fonts/onkonkon.woff2", "/assets/fonts/pre-400.woff2", "/assets/fonts/pre-600.woff2", "/assets/fonts/pre-700.woff2", "/assets/fonts/wildgag.woff2", "/assets/fonts/wonju-b.woff2", "/assets/fonts/yclover-400.woff2", "/assets/fonts/yclover-700.woff2", "/assets/icon-128.png", "/assets/icon-180.png", "/assets/icon-192.png", "/assets/icon-512.png", "/assets/icon.svg", "/assets/og-card.png", "/assets/og.png", "/bgm.js", "/calc.js", "/index.html", "/keep-backup.js", "/manifest.webmanifest", "/palettes.js", "/patterns.js", "/privacy.html", "/terms.html"];
     }
   });
 
@@ -5316,7 +5316,7 @@ h4{font-size:17px;font-weight:800;margin:22px 0 2px;}
   }
 
   // keep/sw-entry.js
-  var \uD310 = "cfd688ca52c9";
+  var \uD310 = "3c52e0c7f5ce";
   var \uB2F4\uC744\uAC83 = define_KEEP_PRECACHE_default;
   var \uD1B5 = "igp-keep-" + \uD310;
   self.addEventListener("install", (e) => {
@@ -5429,6 +5429,10 @@ h4{font-size:17px;font-weight:800;margin:22px 0 2px;}
           }
         });
       }
+    }
+    if (request.method !== "GET" && \uACB0\uACFC.code === 200 && r !== "restore") {
+      self.clients.matchAll({ type: "window" }).then((cs) => cs.forEach((c) => c.postMessage({ type: "keep-changed" }))).catch(() => {
+      });
     }
     return new Response(\uACB0\uACFC.body, { status: \uACB0\uACFC.code, headers: \uACB0\uACFC.headers });
   }

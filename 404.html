@@ -7274,12 +7274,13 @@ if ('serviceWorker' in navigator) {
   el.style.cssText = 'position:fixed;left:10px;right:10px;bottom:calc(env(safe-area-inset-bottom,0px) + 90px);z-index:58;background:var(--ink,#111);color:var(--paper,#fff);padding:16px;border-radius:14px;font-size:14px;line-height:1.6;box-shadow:0 8px 24px rgba(0,0,0,.3)';
   el.innerHTML = '<b>계속 쓰기판이에요</b><br>적은 건 <b>이 기기 안에만</b> 저장돼요. 서버가 없어도 계속 쓸 수 있어요.'
     + (폰 && !홈 ? '<br>📱 아이폰은 <b>공유 → 홈 화면에 추가</b>로 꼭 올려 두고 써 주세요. 안 그러면 사파리가 기록을 지울 수 있어요.' : '')
-    + '<br>폰을 바꿀 때를 위해 가끔 <b>설정 → 통째로 챙겨 두기</b>로 보관본을 받아 두세요.'
+    + '<br>폰을 바꿀 때를 위해 왼쪽 아래 <b>☁ 백업</b>에서 <b>구글 드라이브 자동 백업</b>을 켜 두거나, <b>카톡으로 보내 두세요.</b>'
     + '<br>처음이라면 받아 둔 보관본을 <b>설정 → 통째로 챙겨 두기 → 파일에서 되살리기</b>로 불러오세요.'
     + '<div style="text-align:right;margin-top:10px"><button style="background:var(--paper,#fff);color:var(--ink,#111);border:0;border-radius:10px;padding:8px 14px;font:inherit;font-weight:700">알겠어</button></div>';
   el.querySelector('button').onclick = function(){ try { localStorage.setItem('keepIntro','1'); } catch (e) {} el.remove(); };
   addEventListener('load', function(){ setTimeout(function(){ document.body.appendChild(el); }, 800); });
 })();
 </script>
+<script src="/keep-backup.js" defer></script>
 </body>
 </html>
