@@ -5423,7 +5423,7 @@ h4{font-size:17px;font-weight:800;margin:22px 0 2px;}
   }
 
   // keep/sw-entry.js
-  var \uD310 = "20abe6c551e5";
+  var \uD310 = "31e16288bdcc";
   var \uB2F4\uC744\uAC83 = define_KEEP_PRECACHE_default;
   var \uD1B5 = "igp-keep-" + \uD310;
   self.addEventListener("install", (e) => {
