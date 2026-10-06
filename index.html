@@ -239,6 +239,21 @@ body.u2navoff{ --navbase:calc(8px + env(safe-area-inset-bottom)); }
 .u2lock-m{color:var(--sub);font-size:16px;line-height:1.5;}
 .u2lock-m b{color:var(--ink);font-weight:800;}
 .u2lock-in{margin-top:8px;color:var(--ink);font-size:15px;font-weight:600;line-height:1.45;}
+/* 언제 뭐가 빠지는지 — 점과 선 (사장님 2026-10-04 : 복권지갑 그림 보고 「ㄱ」).
+   ⛔ 칸은 **세 개까지**다. 넷 이상이면 앞 둘 + 「○개 더」 — 폰 폭에 이름이 안 들어간다.
+   ⛔ 선은 첫 점 가운데 ~ 끝 점 가운데만 긋는다(--tl-e = 한 칸 반쪽). */
+.u2tl{position:relative;display:flex;margin-top:12px;padding:16px 4px 12px;border-radius:14px;
+  background:color-mix(in srgb,var(--out) 7%,var(--paper));}
+.u2tl::before{content:'';position:absolute;top:24px;left:var(--tl-e);right:var(--tl-e);height:5px;
+  border-radius:3px;background:var(--out);}
+.u2tl-i{flex:1 1 0;min-width:0;text-align:center;position:relative;}
+.u2tl-d{display:block;margin:0 auto 8px;width:19px;height:19px;border-radius:50%;box-sizing:border-box;
+  background:var(--paper);border:3px solid var(--out);}
+.u2tl-n{display:block;width:max-content;font-style:normal;margin:0 auto 6px;padding:0 8px;border-radius:99px;background:var(--ink);
+  color:var(--paper);font-size:12.5px;font-weight:800;line-height:21px;}
+.u2tl-a{display:block;color:var(--ink);font-size:14.5px;font-weight:800;white-space:nowrap;}
+.u2tl-b{display:block;color:var(--sub);font-size:14px;line-height:1.35;padding:0 4px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .u2fill-r{display:flex;gap:12px;align-items:flex-start;padding:11px 0;border-bottom:1px solid var(--line);}
 .u2fill-r > .u2emo{font-size:22px;line-height:1.2;flex:0 0 auto;}
 .u2fill-r b{font-size:17px;font-weight:800;}
@@ -1242,7 +1257,11 @@ body.u2toasting .u2calc{opacity:0;pointer-events:none;}
 .u2view b,.u2big,.u2r-am,.u2bal-v,.u2two-v{transition:opacity .2s;}
 body.u2syncing .u2view b,body.u2syncing .u2big,body.u2syncing .u2r-am,
 body.u2syncing .u2bal-v,body.u2syncing .u2two-v{opacity:.35;}
-#toast.u2toast{max-width:calc(100vw - 24px);}
+/* 🔴 **글이 한두 낱말씩 세로로 쌓였다** (사장님 2026-10-04 : 십일조·주정헌금 저장 알림 「줄이 이상하게」).
+   left:50% 로 띄운 상자는 **남은 오른쪽 반(50vw)** 만 제 폭으로 안다 — 줄을 바꾸게 하자(09-21)
+   그 반쪽 안에서 접혀 「십일조 / 5,800원 · / 주정헌금 / …」 다섯 줄이 됐다.
+   ⛔ 폭을 글 길이(max-content)로 먼저 잡고, 화면을 넘을 때만 아래 max-width 에서 접는다. */
+#toast.u2toast{width:max-content;max-width:calc(100vw - 24px);box-sizing:border-box;}
 @media (prefers-reduced-motion:reduce){#toast.u2toast .u2toast-b{animation:none;}}
 .u2toast{display:flex;align-items:center;gap:12px;justify-content:center;}
 .u2toast-b{color:var(--acc);font-weight:800;font-size:16px;text-decoration:underline;
@@ -1951,9 +1970,11 @@ function viewHome(d, c) {
       +   '<div class="u2lock-v u2big u2neg">-' + won(c.다음달.bank) + '원</div>'
        /* ⛔ 「이 돈을 또 빼나?」로 당황하지 않게 — 위 빵꾸·밥값에 **이미 넣어 셌다**고 적는다 (2026-09-15 A안) */
     +   (c.다음달고정 ? '<div class="u2lock-in">위 빵꾸랑 밥값에 <b>벌써 넣어서</b> 셌어 · 한 달 먼저 준비해 두자</div>' : '')
+       /* 🔁 2026-10-04 · 「지금 통장에 있어도 절대로 쓰면 안 되는 돈이야」 줄을 **그림이 대신한다**
+          (사장님이 예시 셋을 보고 ㄱ안을 고르심). 날짜가 없는 옛 답이면 그 줄을 그대로 둔다. */
+      +   (빠질그림(c.다음달.rows) || '<div class="u2lock-m">지금 통장에 있어도 <b>절대로 쓰면 안 되는 돈</b>이야</div>')
        /* 사장님이 직접 고르신 말이다 (2026-09-12) — 손대지 말 것. */
-      +   '<div class="u2lock-m">지금 통장에 있어도 <b>절대로 쓰면 안 되는 돈</b>이야<br>'
-      +     '여기 손대면 다음 달에 <b>빵꾸</b> 나</div>'
+      +   '<div class="u2lock-m" style="margin-top:8px">여기 손대면 다음 달에 <b>빵꾸</b> 나</div>'
       +   '<div class="u2seemore"><span>눌러서 뭐가 빠지는지 보기</span>'
       +     '<svg><use href="#p-right"/></svg></div>'
       + '</div>' : '')
@@ -1976,6 +1997,29 @@ function viewHome(d, c) {
           : '앞으로 올 달이야. <b>나갈 돈</b>만 미리 보여줄게.<br>'
             + '하루 밥값이랑 도장은 그 달이 와야 알 수 있어.')
         + '</div>');
+}
+
+/* ── 스쳐 지나갈 돈 · 언제 뭐가 빠지는지 (2026-10-04 ㄱ안) ──────────
+   셋 이하 → 전부 점. 넷 이상 → 앞 둘 + 「○일까지 / ○개 더 나감」.
+   ⛔ 「처음 빠짐 · 다 빠짐」 같은 말은 안 쓴다 (사장님 : 「이해가 안된다」). **이름**을 적는다. */
+function 빠질그림(rows) {
+  const 다 = (rows || []).filter((x) => x && x.d).slice().sort((a, b) => (a.d < b.d ? -1 : a.d > b.d ? 1 : 0));
+  /* ⛔ **같은 이름은 한 번만** (교차검증 2026-10-04) — 주마다 나가는 주정헌금이 「11월 1일 · 11월 8일」
+     두 칸을 다 먹어 보험·월세가 「○개 더」에 묻혔다. 처음 나가는 날 한 칸으로 세고, 「더」도 이름 수로 센다. */
+  const 본 = new Set(), r = 다.filter((x) => !본.has(x.name) && 본.add(x.name));
+  if (!r.length) return '';
+  const 날 = (iso) => (+iso.slice(5, 7)) + '월 ' + (+iso.slice(8, 10)) + '일';
+  const 칸 = (r.length > 3 ? r.slice(0, 2) : r).map((x) => '<div class="u2tl-i"><i class="u2tl-d"></i>'
+    + '<b class="u2tl-a">' + 날(x.d) + '</b><span class="u2tl-b">' + esc(x.name) + ' 나감</span></div>');
+  if (r.length > 3) {
+    const 끝 = 다[다.length - 1].d;          // 마지막으로 빠지는 날(같은 이름의 둘째 날 포함)
+    칸.push('<div class="u2tl-i"><i class="u2tl-n">+' + (r.length - 2) + '개</i>'
+      + '<b class="u2tl-a">' + (+끝.slice(8, 10)) + '일까지</b>'
+      + '<span class="u2tl-b">' + (r.length - 2) + '개 더 나감</span></div>');
+  }
+  /* 점 하나뿐이면 이을 선이 없다 */
+  const e = 칸.length > 1 ? 'calc(4px + (100% - 8px) / ' + (칸.length * 2) + ')' : '50%';
+  return '<div class="u2tl" style="--tl-e:' + e + '">' + 칸.join('') + '</div>';
 }
 
 /* ── 빵꾸 메우는 법 ──────────────────────────────────────
@@ -3939,14 +3983,27 @@ function sheetFixed(f) {
   /* 이율로 회차마다 세는 할부면 칸에 **이 달 실제로 나가는 값(서버 cur)** 을 띄운다 — 적어 둔 amt 와 다를 수 있다 */
   const 이율셈 = !새것 && it.type === 'inst' && !!it.inst && Number(it.inst.rate) > 0;
   const 보인금액 = (이율셈 && it.cur != null) ? Number(it.cur) : (Number(it.amt) || 0);
+  /* 🔴 **할부는 「얼마」에 결제 금액 전체를 받는다** (사장님 2026-10-06 : 「할부 결제금액을 넣으면 할부 개월 계산이
+        안되고 그 금액에 할부를 곱해서 나오고 있음」). 이 칸이 한 달 치를 받는 칸이라, 결제 금액 500,000 · 5개월을
+        넣으면 매달 500,000 · 「총 2,500,000원」이 됐다. 홈에서 할부로 적을 때(할부로넣기)도 넣은 값은 **전체**다 —
+        같은 물건을 어디서 넣었느냐로 뜻이 달라지면 안 된다.
+     → 종류가 할부면 칸 이름이 「결제 금액」으로 바뀌고, 한 달 치는 **전체 ÷ 개월**로 앱이 센다.
+     ⛔ 이미 있는 할부는 칸에 **전체**(적어 둔 총액, 없으면 매달 × 개월)를 띄운다. 한 달 치를 띄우면 그게 전체로 읽힌다. */
+  const 처음개월 = 할부개월(it);
+  const 처음총액 = Number(String((it.inst || {}).total || '').replace(/[^\d]/g, ''))
+    || (처음개월 ? (Number(it.amt) || 0) * 처음개월 : 0);
+  let 금액전체 = type === 'inst' && 처음개월 >= 2 && 처음총액 > 0;   // 지금 「얼마」 칸이 전체를 담고 있나
+  const 처음칸값 = 금액전체 ? 처음총액 : 보인금액;
+  const 할부금액이름 = '결제 금액 <span style="font-weight:400;color:var(--faint)">다 합친 값 · 알아서 나눌게</span>';
 
   pop(새것 ? '고정지출 새로' : '고정지출 고치기',
     '<div class="u2fld"><label>이름</label><input id="fxName" maxlength="40" value="'
     +   esc(it.name) + '" placeholder="월세 · 넷플릭스 · 보험"></div>'
-    + '<div class="u2fld"><label>얼마</label><input id="fxAmt" inputmode="numeric" value="'
-    +   (보인금액 ? won(보인금액) : '') + '" placeholder="0">'
+    + '<div class="u2fld"><label id="fxAmtLbl">' + (type === 'inst' ? 할부금액이름 : '얼마') + '</label>'
+    +   '<input id="fxAmt" inputmode="numeric" value="'
+    +   (처음칸값 ? won(처음칸값) : '') + '" placeholder="0">'
     +   (이율셈 ? '<div class="u2sub" style="font-size:14px;margin-top:6px">연 ' + Number(it.inst.rate)
-        + '% 로 회차마다 세고 있어 · 금액을 고치면 <b>그 금액으로 고정</b>돼</div>' : '')
+        + '% 로 회차마다 세고 있어' + (it.cur != null ? ' · 이 달 <b>' + won(it.cur) + '원</b>' : '') + '</div>' : '')
     + '</div>'
     + '<div class="u2fld"><label>며칠에</label><div class="chips" id="fxDay">'
     +   [1, 5, 10, 15, 20, 25, 28].map((d) => '<button class="chip' + (d === day ? ' on' : '')
@@ -3975,9 +4032,11 @@ function sheetFixed(f) {
         + '<button class="chip' + (같이 ? '' : ' on') + '" data-wt="0">그날 저절로</button></div></div>' : '')
     + '<div class="u2fld" id="fxInstWrap"' + (type === 'inst' ? '' : ' hidden') + '>'
     +   '<label>몇 개월 할부 <span style="font-weight:400;color:var(--faint)">'
-    +   '12 개월이면 12 · 이자율은 안 적어도 돼</span></label>'
+    +   '12 개월이면 12 · 무이자는 이자율을 안 적어도 돼</span></label>'
     +   '<input id="fxInstM" inputmode="numeric" maxlength="2" value="'
-    +   (할부개월(it) || '') + '" placeholder="12"></div>'
+    +   (처음개월 || '') + '" placeholder="12">'
+       /* 나눈 값을 그 자리에서 보여 준다 — 「얼마」에 무엇이 들어간 것인지 손님이 바로 알아본다 */
+    +   '<div class="u2sub" id="fxInstHint" style="font-size:14px;margin-top:6px"></div></div>'
        /* 대출 칸 — 종류가 「대출이자」일 때만 (사장님 2026-09-14 · 고정 탭 대출 고도화 ④).
           ⛔ 다 비워도 저장된다. 아는 칸만 적으면 그만큼만 센다 — 모르는 값을 채우라고 막지 않는다. */
     + '<div class="u2fld" id="fxLoanWrap"' + (type === 'loan' ? '' : ' hidden') + '>'
@@ -4059,6 +4118,13 @@ function sheetFixed(f) {
       el.querySelectorAll('[data-type]').forEach((x) => x.classList.toggle('on', x.dataset.type === type));
       $('#fxInstWrap', el).hidden = type !== 'inst';
       $('#fxLoanWrap', el).hidden = type !== 'loan';
+      /* 할부로 들어가고 나올 때 칸의 뜻(전체 ↔ 한 달 치)이 바뀐다 — 개월수를 알면 값도 같이 옮겨 적는다 */
+      const 전체로 = type === 'inst';
+      const n = 칸개월(), v = 칸금액();
+      if (전체로 !== 금액전체 && n >= 2 && v > 0) amtIn.value = won(전체로 ? v * n : Math.round(v / n));
+      금액전체 = 전체로;
+      $('#fxAmtLbl', el).innerHTML = 전체로 ? 할부금액이름 : '얼마';
+      할부풀이();
     });
     const lpIn = $('#fxLP', el);
     lpIn.oninput = () => { const n = lpIn.value.replace(/[^\d]/g, ''); lpIn.value = n ? won(n) : ''; };
@@ -4067,7 +4133,31 @@ function sheetFixed(f) {
       el.querySelectorAll('[data-wt]').forEach((x) => x.classList.toggle('on', (x.dataset.wt === '1') === 같이));
     });
     const amtIn = $('#fxAmt', el);
-    amtIn.oninput = () => { const n = amtIn.value.replace(/[^\d]/g, ''); amtIn.value = n ? won(n) : ''; };
+    const 칸금액 = () => Number(String(amtIn.value).replace(/[^\d]/g, '')) || 0;
+    const 칸개월 = () => {
+      const n = Number(String(($('#fxInstM', el) || {}).value || '').replace(/[^\d]/g, '')) || 0;
+      return (n >= 2 && n <= 60) ? n : 0;
+    };
+    /* 「매달 100,000원씩 5번 · 2027년 2월에 끝나」 — 할부일 때 개월수 칸 밑에 */
+    const 할부풀이 = () => {
+      const 칸 = $('#fxInstHint', el);
+      if (!칸) return;
+      const n = 칸개월(), v = 칸금액();
+      if (type !== 'inst' || !n || !v) { 칸.innerHTML = ''; return; }
+      const 부터 = ($('#fxFrom', el).value || it.from || String(D.today || '').slice(0, 7) || nowMonth());
+      let 끝말 = '';
+      if (/^\d{4}-\d{2}$/.test(부터)) {
+        const dt = new Date(+부터.slice(0, 4), +부터.slice(5, 7) - 1 + (n - 1), 1);
+        끝말 = ' · ' + dt.getFullYear() + '년 ' + (dt.getMonth() + 1) + '월에 끝나';
+      }
+      /* 이율로 세는 할부는 회차마다 수수료가 더 붙는다 — 나눈 값만 적으면 실제보다 적게 읽힌다 */
+      const 수수료 = Number((it.inst || {}).rate) > 0 ? ' + 수수료' : '';
+      칸.innerHTML = '매달 <b>' + won(Math.round(v / n)) + '원</b>씩 ' + n + '번' + 수수료 + 끝말;
+    };
+    amtIn.oninput = () => { const n = amtIn.value.replace(/[^\d]/g, ''); amtIn.value = n ? won(n) : ''; 할부풀이(); };
+    $('#fxInstM', el).oninput = 할부풀이;
+    $('#fxFrom', el).addEventListener('input', 할부풀이);
+    할부풀이();
 
     /* ⚡ 멈추기·다시 쓰기·지우기도 **화면 먼저** (2026-09-17) — 서버가 거절하면 되돌린다 */
     if ($('#fxPause', el)) $('#fxPause', el).onclick = async () => {
@@ -4163,9 +4253,13 @@ function sheetFixed(f) {
     };
     $('#fxSave', el).onclick = async () => {
       const name = ($('#fxName', el).value || '').trim();
-      const amt = Number(String(amtIn.value).replace(/[^\d]/g, '')) || 0;
+      const 칸값 = 칸금액();
       if (!name) { toast('이름을 적어 줘'); return; }
-      if (!amt) { toast('금액을 적어 줘'); return; }
+      if (!칸값) { toast('금액을 적어 줘'); return; }
+      /* 할부면 칸값은 **전체**다 — 개월수가 있어야 한 달 치를 나눌 수 있다 */
+      const 할부달 = type === 'inst' ? 칸개월() : 0;
+      if (type === 'inst' && !할부달) { toast('몇 개월 할부인지 적어 줘'); return; }
+      const amt = 할부달 ? Math.round(칸값 / 할부달) : 칸값;
       close();
       let 되돌림 = null;
       try {
@@ -4183,27 +4277,26 @@ function sheetFixed(f) {
               보내면 총액·이율·첫 회 값이 조용히 날아간다 (사장님이 A 에서 넣어 두신 값이다).
            ⛔ 종류가 할부가 아니면 손대지 않는다 — 칸이 화면에 없으니 값도 없는 것이 맞다. */
         if (type === 'inst') {
-          const 개월 = Math.min(60, Math.max(0, Number(($('#fxInstM', el).value || '').replace(/[^\d]/g, '')) || 0));
-          /* 🔴 **「얼마」를 고치셨으면 그 값이 이긴다** (사장님 2026-09-16 : 「제습기 할부 총액 바꿨는데 반영이 어디에도 안돼」).
-             A 에서 넣어 둔 이율·총액이 남아 있으면 서버가 회차마다 이율로 다시 세서(amtFor) **고친 금액을 무시했다** —
-             고정 탭만 49,000 · 장부·카드값은 107,060. 이 창엔 이율 칸이 없으니 고칠 길도 없었다.
-             → 금액을 바꾸면 이율 셈을 걷고(rate 0) 총액을 「매달 × 개월」로 맞춘다. 첫 회(first)는 그대로 둔다.
-             ⛔ 금액을 안 건드렸으면 이율 셈은 그대로 산다. */
-          const 옛inst = it.inst || {};
-          if (이율셈 && amt !== 보인금액) {
-            const n = 개월 >= 2 ? 개월 : (Number(옛inst.months) || 0);
-            보낼것.inst = Object.assign({}, 옛inst, { rate: 0, months: n, total: n >= 2 ? amt * n : 옛inst.total });
-          }
-          if (개월 >= 2) {
-            보낼것.inst = Object.assign({}, 보낼것.inst || it.inst || {}, { months: 개월 });
-            /* 「언제까지」를 비워 두셨으면 개월수로 채운다 — 그래야 목록에 「11월까지 2번 남음」이
-               뜨고, 다 낸 뒤에 저절로 멈춘다. ⛔ 적어 두신 끝달은 건드리지 않는다. */
-            const 시작 = 보낼것.from || it.from || '';
-            if (!보낼것.to && /^\d{4}-\d{2}$/.test(시작)) {
-              const dt = new Date(+시작.slice(0, 4), +시작.slice(5, 7) - 1 + (개월 - 1), 1);
-              보낼것.to = dt.getFullYear() + '-' + String(dt.getMonth() + 1).padStart(2, '0');
-            }
-          }
+          const 개월 = 할부달;
+          /* 🔴 「얼마」 칸은 **결제 금액 전체**다 (사장님 2026-10-06). 총액은 그 값 그대로, 한 달 치는 위에서 나눈 amt.
+             ⛔ 예전(2026-09-16)엔 이 칸이 한 달 치라서, 이율 있는 할부에서 금액을 고치면 이율을 걷고 그 금액으로 고정했다.
+                이제 이 칸이 총액이니 **이율은 그대로 두고 총액만 바꾼다** — 서버(amtFor)가 새 총액으로 회차마다 다시 센다.
+                (이 창엔 이율 칸이 없다 — 걷으면 A 에서 넣어 두신 이율을 되살릴 길이 없다)
+             ⛔ 옛 값 위에 얹는다. 서버는 inst 를 통째로 갈아 끼우기 때문에 첫 회(first)·이율이 조용히 날아간다. */
+          보낼것.inst = Object.assign({}, it.inst || {}, { months: 개월, total: 칸값 });
+          /* 「언제까지」를 비워 두셨으면 개월수로 채운다 — 그래야 목록에 「11월까지 2번 남음」이
+             뜨고, 다 낸 뒤에 저절로 멈춘다.
+             ⛔ 끝달이 **예전 개월수로 저절로 채워 둔 값 그대로**면 새 개월수로 옮긴다 — 안 그러면 5개월을 6개월로
+                고쳐도 끝달이 그대로라 한 번이 빠진다. 손으로 다르게 적어 두신 끝달은 건드리지 않는다. */
+          /* ⛔ 새로 넣을 땐 시작달 칸이 비어 있다 — 서버가 그때 이번 달로 채우니 여기서도 이번 달로 보고 끝달을 센다
+             (안 그러면 끝달이 비어 다 낸 뒤에도 안 멈춘다) */
+          const 시작 = 보낼것.from || it.from || String(D.today || '').slice(0, 7) || nowMonth();
+          const 끝달 = (부터, k) => {
+            const dt = new Date(+부터.slice(0, 4), +부터.slice(5, 7) - 1 + (k - 1), 1);
+            return dt.getFullYear() + '-' + String(dt.getMonth() + 1).padStart(2, '0');
+          };
+          const 옛끝 = (처음개월 >= 2 && /^\d{4}-\d{2}$/.test(it.from || '')) ? 끝달(it.from, 처음개월) : '';
+          if (/^\d{4}-\d{2}$/.test(시작) && (!보낼것.to || 보낼것.to === 옛끝)) 보낼것.to = 끝달(시작, 개월);
         }
         /* 대출 — ⛔ 옛 값 위에 얹는다(할부와 같은 까닭). 만기를 적고 「언제까지」가 비었으면 만기 달로 채운다 —
            만기가 지나면 이자가 저절로 멈춘다. ⛔ 적어 두신 끝달은 건드리지 않는다. */
@@ -4816,7 +4909,8 @@ function 십일조적기() {
         }
       })();
       /* ⛔ 방금 한 것을 그 자리에서 무를 수 있어야 한다 — 같이 적은 헌금 · 뺀 표시까지 한 번에 */
-      toastDo([적은말.length ? 적은말.join(' · ') + ' 적었어' : '', 뺀말.length ? 뺀말.join(' · ') + '는 이번 주 뺐어' : ''].filter(Boolean).join(' · '), '되돌리기', async () => {
+      /* ⛔ 「적었어」는 뺀다 (사장님 2026-10-04 : 「적었어 지워」) — 그 한 마디만 둘째 줄로 떨어졌다. 이름·금액이면 충분하다. */
+      toastDo([적은말.length ? 적은말.join(' · ') : '', 뺀말.length ? 뺀말.join(' · ') + '는 이번 주 뺐어' : ''].filter(Boolean).join(' · '), '되돌리기', async () => {
         try { await 보냄; } catch (e) { return; }
         const 무름 = 먼저그리기((d) => {
           (d.tx || []).filter((x) => 적은것.indexOf(x.id) >= 0).forEach((x) => 줄효과(d, x, -1));
