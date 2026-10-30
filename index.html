@@ -2125,7 +2125,7 @@ function tithePast(d) {
 function tithe(d) {
   if (((d.cfg || {}).titheOn) === false) return '';
   const t = d.tithe || {};
-  if (!t.since && !t.monthPaid && !t.monthIncome && !t.left && !t.nextSince && !(t.offer || []).length) return '';
+  if (!t.since && !t.addSum && !t.monthPaid && !t.monthIncome && !t.left && !t.nextSince && !(t.offer || []).length) return '';
   const 적어둔 = t.planned || 0;
   const 더할것 = Math.max(0, (t.left || 0) - 적어둔);
   const 헌금 = t.offer || [];
@@ -4945,7 +4945,10 @@ function 십일조내역() {
   /* ✕ = 십일조 바탕에서 빼기 (사장님 2026-09-16 : 「삭제가능하게」).
      ⛔ 장부 줄은 안 지운다 — 통장엔 들어온 돈이라 잔액은 그대로다. 뺀 줄은 아래 「뺀 돈」에서 되살린다.
      ⛔ 번호(id) 없는 옛 줄은 ✕ 를 안 단다 — 무엇을 뺄지 못 집는다. */
-  const 빼기단추 = (r) => (r.id && !예시중)
+  /* 손으로 더한 돈(ta)은 ✕ 가 **지우기**다 — 장부 줄이 아니라 뺄 것이 없다 (2026-10-30) */
+  const 빼기단추 = (r) => (r.id && !예시중 && r.ta)
+    ? '<button class="u2ntx" data-tdel="' + esc(r.id) + '" aria-label="더한 돈 지우기">✕</button>'
+    : (r.id && !예시중)
     ? '<button class="u2ntx" data-nt="' + esc(r.id) + '" data-ntd="' + esc(r.d) + '" aria-label="십일조에서 빼기">✕</button>' : '';
   const 들어온 = 바탕.map((r) =>
     '<div class="u2list-row"><span class="d">' + md(r.d) + '</span>'
@@ -4982,6 +4985,15 @@ function 십일조내역() {
     +   '<span>' + won(바탕합) + '원</span></div>'
     +   '<div class="u2grp-s">' + md(전날(t.weekFrom) || D.today) + '~' + md(t.payOn || D.today) + '</div>'
     +   (들어온 || '<div class="u2empty">없어</div>') + '</div>'
+       /* 🔴 **직접 더한 십일조** (사장님 2026-10-30 : 「십일조에 직접쓸수도 있게해줘」 · 「진짜 십일조금액만 적히게」).
+          적은 금액이 **그대로** 낼 십일조에 더해진다(10분의 1 아님). 잔액은 안 바뀐다. */
+    + (예시중 ? '' : '<div class="u2grp"><div class="u2grp-h"><b>직접 더한 십일조</b>'
+        + '<span>' + won(t.addSum || 0) + '원</span></div>'
+        + (t.addRows || []).map((r) =>
+          '<div class="u2list-row"><span class="d">' + md(r.d) + '</span>'
+          + '<span class="n">' + esc(r.memo || '직접 더한 십일조') + '</span>'
+          + '<span class="a">' + won(r.amt) + '</span>' + 빼기단추(r) + '</div>').join('')
+        + '<button class="u2go ghost" data-tadd style="margin-top:12px">+ 십일조 직접 더하기</button></div>')
     + '<div class="u2grp"><div class="u2grp-h"><b>' + (+M.slice(5, 7)) + '월에 낸 것</b>'
     +   '<span>' + won(달낸.reduce((a, r) => a + (Number(r.amt) || 0), 0)) + '원</span></div>'
     +   (낸것 || '<div class="u2empty">아직 없어</div>') + '</div>'
@@ -5022,7 +5034,7 @@ function 십일조내역() {
           if (!뺄.length) return;
           t[줄] = t[줄].filter((r) => r.id !== id);
           t[합] = Math.max(0, Number(t[합] || 0) - 뺄.reduce((a, r) => a + (Number(r.amt) || 0), 0));
-          if (줄 === 'rows') t.left = Math.floor(t.since / 10);
+          if (줄 === 'rows') t.left = Math.floor(t.since / 10) + (t.addSum || 0);
         });
       });
       다시그림(close);
@@ -5033,7 +5045,36 @@ function 십일조내역() {
         M = D.m || M; render(); 다시그림();
       } catch (e) { 되돌림(); 다시그림(); toast(e.message); }
     };
+    /* 직접 더한 돈 — 더하기·지우기. 잔액은 안 바뀐다(장부 줄이 아니다) */
+    const 더한것 = async (op, tx) => {
+      try {
+        D = await api('tx', { body: { op, tx: Object.assign({ viewM: M }, tx) } });
+        M = D.m || M; render(); 다시그림(close);
+        toast(op === 'tadd' ? '십일조에 더했어 · 잔액은 그대로야' : '더한 십일조를 지웠어');
+      } catch (e) { toast(e.message); }
+    };
+    const 더하기창 = () => pop('십일조 직접 더하기',
+      '<div class="u2sub">적은 금액이 그대로 낼 십일조에 더해져. 잔액은 안 바뀌어</div>'
+      + '<div class="u2fld"><label>십일조 얼마</label><input id="taAmt" inputmode="numeric" placeholder="0"></div>'
+      + '<div class="u2fld"><label>내용</label><input id="taMemo" placeholder="무슨 돈의 십일조인지"></div>'
+      + '<div class="u2fld"><label>언제</label><input id="taDate" type="date" value="' + esc(D.today) + '"></div>'
+      + '<div class="u2btns"><button class="go" id="taSave">더하기</button></div>',
+    (el2, close2) => {
+      const 금 = $('#taAmt', el2);
+      금.oninput = () => { const v = Number(금.value.replace(/[^d]/g, '')) || 0; 금.value = v ? won(v) : ''; };
+      setTimeout(() => 금.focus(), 50);
+      $('#taSave', el2).onclick = () => {
+        const amt = Number(금.value.replace(/[^d]/g, '')) || 0;
+        if (amt <= 0) { toast('금액을 넣어 줘'); return; }
+        const d = $('#taDate', el2).value || D.today;
+        close2();
+        더한것('tadd', { id: 새줄번호(), d, amt, memo: $('#taMemo', el2).value.trim(), ts: Date.now() });
+      };
+    });
     el.addEventListener('click', (e) => {
+      if (e.target.closest('[data-tadd]')) { 더하기창(); return; }
+      const td = e.target.closest('[data-tdel]');
+      if (td) { td.disabled = true; 더한것('tdel', { id: td.dataset.tdel }); return; }
       const b = e.target.closest('[data-nt],[data-ntback]');
       if (!b) return;
       b.disabled = true;

@@ -206,5 +206,59 @@
       }
     ],
     "kb": 128
+  },
+  {
+    "id": "leeseoyun",
+    "name": "이서윤체",
+    "hint": "또박또박 예쁜 손글씨",
+    "owner": "흥국생명",
+    "lic": "임베딩 허용",
+    "faces": [
+      {
+        "w": 400,
+        "f": "leeseoyun.woff2"
+      },
+      {
+        "w": 700,
+        "f": "leeseoyun.woff2"
+      }
+    ],
+    "kb": 276
+  },
+  {
+    "id": "moyamoya",
+    "name": "모야모야",
+    "hint": "말랑말랑 귀엽게",
+    "owner": "카페24",
+    "lic": "임베딩 허용",
+    "faces": [
+      {
+        "w": 400,
+        "f": "moyamoya.woff2"
+      },
+      {
+        "w": 700,
+        "f": "moyamoya.woff2"
+      }
+    ],
+    "kb": 205
+  },
+  {
+    "id": "paperlogy",
+    "name": "페이퍼로지",
+    "hint": "깔끔한 요즘 고딕",
+    "owner": "이주임 X 김도균",
+    "lic": "임베딩 허용",
+    "faces": [
+      {
+        "w": 400,
+        "f": "paperlogy-400.woff2"
+      },
+      {
+        "w": 700,
+        "f": "paperlogy-700.woff2"
+      }
+    ],
+    "kb": 849
   }
 ]

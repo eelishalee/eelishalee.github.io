@@ -32,7 +32,7 @@
   var define_KEEP_PRECACHE_default;
   var init_define_KEEP_PRECACHE = __esm({
     "<define:__KEEP_PRECACHE__>"() {
-      define_KEEP_PRECACHE_default = ["/", "/app.css", "/assets/bgm/grace-on-my-way-lite.mp3", "/assets/bgm/grace-on-my-way.mp3", "/assets/fonts/ahyoung.woff2", "/assets/fonts/cherry.woff2", "/assets/fonts/coco.woff2", "/assets/fonts/fonts.json", "/assets/fonts/free-500.woff2", "/assets/fonts/free-700.woff2", "/assets/fonts/free-800.woff2", "/assets/fonts/gooltokki.woff2", "/assets/fonts/gw-hyunok.woff2", "/assets/fonts/gw-teunteun.woff2", "/assets/fonts/kedu-400.woff2", "/assets/fonts/kedu-700.woff2", "/assets/fonts/onkonkon.woff2", "/assets/fonts/pre-400.woff2", "/assets/fonts/pre-600.woff2", "/assets/fonts/pre-700.woff2", "/assets/fonts/wildgag.woff2", "/assets/fonts/wonju-b.woff2", "/assets/fonts/yclover-400.woff2", "/assets/fonts/yclover-700.woff2", "/assets/icon-128.png", "/assets/icon-180.png", "/assets/icon-192.png", "/assets/icon-512.png", "/assets/icon.svg", "/assets/og-card.png", "/assets/og.png", "/bgm.js", "/calc.js", "/index.html", "/keep-backup.js", "/manifest.webmanifest", "/palettes.js", "/patterns.js", "/privacy.html", "/terms.html"];
+      define_KEEP_PRECACHE_default = ["/", "/app.css", "/assets/bgm/grace-on-my-way-lite.mp3", "/assets/bgm/grace-on-my-way.mp3", "/assets/fonts/ahyoung.woff2", "/assets/fonts/cherry.woff2", "/assets/fonts/coco.woff2", "/assets/fonts/fonts.json", "/assets/fonts/free-500.woff2", "/assets/fonts/free-700.woff2", "/assets/fonts/free-800.woff2", "/assets/fonts/gooltokki.woff2", "/assets/fonts/gw-hyunok.woff2", "/assets/fonts/gw-teunteun.woff2", "/assets/fonts/kedu-400.woff2", "/assets/fonts/kedu-700.woff2", "/assets/fonts/leeseoyun.woff2", "/assets/fonts/moyamoya.woff2", "/assets/fonts/onkonkon.woff2", "/assets/fonts/paperlogy-400.woff2", "/assets/fonts/paperlogy-700.woff2", "/assets/fonts/pre-400.woff2", "/assets/fonts/pre-600.woff2", "/assets/fonts/pre-700.woff2", "/assets/fonts/wildgag.woff2", "/assets/fonts/wonju-b.woff2", "/assets/fonts/yclover-400.woff2", "/assets/fonts/yclover-700.woff2", "/assets/icon-128.png", "/assets/icon-180.png", "/assets/icon-192.png", "/assets/icon-512.png", "/assets/icon.svg", "/assets/og-card.png", "/assets/og.png", "/bgm.js", "/calc.js", "/index.html", "/keep-backup.js", "/manifest.webmanifest", "/palettes.js", "/patterns.js", "/privacy.html", "/terms.html"];
     }
   });
 
@@ -2782,7 +2782,11 @@ h4{font-size:17px;font-weight:800;margin:22px 0 2px;}
        ⛔ 위의 rev(fixedRev)와 다른 것이다 — 그건 「고정지출 정의가 바뀌었나」만 본다.
           이건 **무엇이든 바뀌면** 오른다. 다른 기기는 이 번호만 물어보고, 달라졌을 때만 다시 받는다.
           (장부 전체를 계속 받아 보면 저장소 요금이 감당이 안 된다) */
-    drev: `lb:${ws}:drev`
+    drev: `lb:${ws}:drev`,
+    /* 십일조 바탕에 **손으로 더한 돈** (사장님 2026-10-30 : 「십일조에 직접쓸수도 있게해줘」).
+       ⛔ 장부(tx)에 안 넣는다 — 잔액·수입 합계는 안 바뀐다. 십일조 셈(tAll)에만 끼운다. */
+    tadd: `lb:${ws}:tadd`
+    // [{ id, d, amt, memo, ts }]
   });
   var FX_KEY = "lb:fx:usd";
   var OWNER_SEEN = "lb:sys:ownerSeen";
@@ -3863,7 +3867,8 @@ h4{font-size:17px;font-weight:800;margin:22px 0 2px;}
       fixedRaw,
       fixRevRaw,
       drevRaw,
-      checksRaw
+      checksRaw,
+      taddRaw
     ] = await mget([
       K.tx(m),
       K.mat(m),
@@ -3878,7 +3883,8 @@ h4{font-size:17px;font-weight:800;margin:22px 0 2px;}
       K.fixed,
       K.rev,
       K.drev,
-      K.checks
+      K.checks,
+      K.tadd
     ]);
     const \uC801\uC740\uB2EC = /* @__PURE__ */ new Set();
     const fixed = await catchUp(K, fixedRaw, fixRevRaw, (cfgRaw || {}).titheOn !== false, \uC801\uC740\uB2EC);
@@ -3926,6 +3932,7 @@ h4{font-size:17px;font-weight:800;margin:22px 0 2px;}
     sums.forEach((s) => {
       if (s) carry += (s.in || 0) - (s.out || 0);
     });
+    const \uB354\uD55C\uB3C8 = (Array.isArray(taddRaw) ? taddRaw : []).map((x) => ({ id: x.id, d: x.d, amt: money(x.amt), memo: x.memo || "", cat: "\uC9C1\uC811 \uB354\uD55C \uC2ED\uC77C\uC870", ts: x.ts, ta: 1 }));
     const tAll = [].concat(...tBack.map((x) => txCache[x] || []), tBack.includes(m) ? [] : tx);
     const todayISO = today10();
     const \uBC14\uD0D5\uC544\uB2D8 = (t) => !!(t && t.nt) || /환급|돌려받|빌려|갚/.test(String(t && t.cat || ""));
@@ -3948,7 +3955,9 @@ h4{font-size:17px;font-weight:800;margin:22px 0 2px;}
     const \uB05D = \uC8FC\uC77C\uB9C8\uAC10(nextSun);
     const \uC774\uBC88\uBAAB = tAll.filter((t) => \uC218\uC785\uC904(t) && \uC7B0\uC2DC\uAC01(t) > \uC2DC\uC791 && \uC7B0\uC2DC\uAC01(t) <= \uB05D);
     const weekIncome = \uC774\uBC88\uBAAB.reduce((a, t) => a + t.amt, 0);
-    const \uC904\uB85C = (list) => list.slice().sort((a, b) => a.d < b.d ? 1 : a.d > b.d ? -1 : 0).slice(0, 10).map((t) => ({ id: t.id || "", d: t.d, amt: t.amt, cat: t.cat || "", memo: t.memo || "" }));
+    const \uB354\uD55C\uBAAB = \uB354\uD55C\uB3C8.filter((t) => \uC7B0\uC2DC\uAC01(t) > \uC2DC\uC791 && \uC7B0\uC2DC\uAC01(t) <= \uB05D);
+    const \uB354\uD55C\uD569 = \uB354\uD55C\uBAAB.reduce((a, t) => a + t.amt, 0);
+    const \uC904\uB85C = (list) => list.slice().sort((a, b) => a.d < b.d ? 1 : a.d > b.d ? -1 : 0).slice(0, 10).map((t) => Object.assign({ id: t.id || "", d: t.d, amt: t.amt, cat: t.cat || "", memo: t.memo || "" }, t.ta ? { ta: 1 } : {}));
     const \uBAAB\uC904 = \uC904\uB85C(\uC774\uBC88\uBAAB);
     const \uB0B8\uBAAB = \uB9C8\uC9C0\uB9C9\uB0A9\uBD80 > \uC8FC\uC77C\uB9C8\uAC10(\uC9C0\uB09C\uC8FC\uC77C) ? tAll.filter((t) => \uC218\uC785\uC904(t) && \uC7B0\uC2DC\uAC01(t) > \uC8FC\uC77C\uB9C8\uAC10(\uC9C0\uB09C\uC8FC\uC77C) && \uC7B0\uC2DC\uAC01(t) <= \uB9C8\uC9C0\uB9C9\uB0A9\uBD80) : [];
     const \uB0B8\uBAAB\uC904 = \uC904\uB85C(\uB0B8\uBAAB);
@@ -4007,8 +4016,11 @@ h4{font-size:17px;font-weight:800;margin:22px 0 2px;}
       // 이 달에 낸 십일조마다 그 바탕이 된 돈 (2026-09-15)
       offer: \uD5CC\uAE08\uAC19\uC774,
       // 십일조 적을 때 같이 적을 헌금(주정헌금)
-      left: Math.floor(weekIncome / 10),
-      // 이번에 내실 것
+      left: Math.floor(weekIncome / 10) + \uB354\uD55C\uD569,
+      // 이번에 내실 것 (직접 더한 십일조는 그대로 더함)
+      addRows: \uC904\uB85C(\uB354\uD55C\uBAAB),
+      // 직접 더한 십일조 (2026-10-30)
+      addSum: \uB354\uD55C\uD569,
       planned: \uC801\uC5B4\uB454\uAC83,
       // 그 주일 자로 이미 적어 두신 것
       /* ⛔ **내신 뒤에 「들어온 돈이 0원」이라 말하지 않는다** (2026-08-16 검사 중에 잡음).
@@ -4019,7 +4031,7 @@ h4{font-size:17px;font-weight:800;margin:22px 0 2px;}
           주일 하루를 남기기로 하면서 이 말이 거짓이 됐다 — 같이 고쳐야 하는 짝이다)
          ⛔ 들어온 것이 0 일 때만 채운다. 새로 들어온 돈이 있으면 그건 다음 몫이라
             「내셨어요」가 아니라 「낼 것」을 말해야 한다. */
-      paidAt: weekIncome === 0 && \uB9C8\uC9C0\uB9C9\uB0A9\uBD80 > \uC8FC\uC77C\uB9C8\uAC10(\uC9C0\uB09C\uC8FC\uC77C) ? \uD55C\uAD6D\uB0A0(\uB9C8\uC9C0\uB9C9\uB0A9\uBD80) : "",
+      paidAt: weekIncome === 0 && \uB354\uD55C\uD569 === 0 && \uB9C8\uC9C0\uB9C9\uB0A9\uBD80 > \uC8FC\uC77C\uB9C8\uAC10(\uC9C0\uB09C\uC8FC\uC77C) ? \uD55C\uAD6D\uB0A0(\uB9C8\uC9C0\uB9C9\uB0A9\uBD80) : "",
       monthIncome: sum.in,
       monthPaid: sum.tithe || 0
     };
@@ -4623,6 +4635,19 @@ h4{font-size:17px;font-weight:800;margin:22px 0 2px;}
           await saveMonth(K, m2, list.filter((x) => x.id !== t.id));
           return sendMonth(isMonth(t.viewM) ? t.viewM : m2);
         }
+        if (op === "tadd" || op === "tdel") {
+          const \uD45C = await get(K.tadd) || [];
+          let \uC0C8 = Array.isArray(\uD45C) ? \uD45C.filter((x) => x && x.id !== t.id) : [];
+          if (op === "tadd") {
+            if (!isDate(t.d)) return res.status(400).json({ ok: false, err: "\uB0A0\uC9DC\uB97C \uD655\uC778\uD574 \uC8FC\uC138\uC694." });
+            const amt2 = money(t.amt);
+            if (amt2 <= 0) return res.status(400).json({ ok: false, err: "\uAE08\uC561\uC744 \uB123\uC5B4 \uC8FC\uC138\uC694." });
+            \uC0C8.push({ id: t.id || newId(), d: t.d, amt: amt2, memo: clean(t.memo, 80), ts: Number(t.ts) || Date.now() });
+            \uC0C8 = \uC0C8.filter((x) => x.d >= new Date(Date.now() - 120 * 864e5).toISOString().slice(0, 10));
+          }
+          await set(K.tadd, \uC0C8);
+          return sendMonth(isMonth(t.viewM) ? t.viewM : t.d ? t.d.slice(0, 7) : curMonth());
+        }
         if (op === "nt") {
           const m2 = isMonth(t.m) ? t.m : isDate(t.d) ? t.d.slice(0, 7) : curMonth();
           const list = await get(K.tx(m2)) || [];
@@ -5011,7 +5036,8 @@ h4{font-size:17px;font-weight:800;margin:22px 0 2px;}
           K.bills,
           K.drev,
           K.checks,
-          K.undoFx
+          K.undoFx,
+          K.tadd
         ];
         months.forEach((m) => keysToGo.push(K.tx(m), K.sum(m), K.mat(m), K.note(m)));
         const from = (await getCfg(K)).openingMonth || curMonth();
@@ -5221,7 +5247,7 @@ h4{font-size:17px;font-weight:800;margin:22px 0 2px;}
       }
       if (r === "dump") {
         const months = await get(K.months) || [];
-        const single = [K.cfg, K.fixed, K.rev, K.nsBest, K.nsRun, K.nsLog, K.use, K.bills, K.checks];
+        const single = [K.cfg, K.fixed, K.rev, K.nsBest, K.nsRun, K.nsLog, K.use, K.bills, K.checks, K.tadd];
         const per = months.flatMap((m) => [K.tx(m), K.sum(m), K.mat(m), K.note(m)]);
         const vals = await mget(single.concat(per));
         const kv = {};
@@ -5423,7 +5449,7 @@ h4{font-size:17px;font-weight:800;margin:22px 0 2px;}
   }
 
   // keep/sw-entry.js
-  var \uD310 = "164b924ba3c1";
+  var \uD310 = "c47c9644f1cd";
   var \uB2F4\uC744\uAC83 = define_KEEP_PRECACHE_default;
   var \uD1B5 = "igp-keep-" + \uD310;
   self.addEventListener("install", (e) => {
