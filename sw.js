@@ -3953,7 +3953,10 @@ h4{font-size:17px;font-weight:800;margin:22px 0 2px;}
     const \uB9C8\uC9C0\uB9C9\uB0A9\uBD80 = tAll.reduce((a, t) => \uC2ED\uC77C\uC870\uC904(t) && t.d <= todayISO && !\uC544\uC9C1\uC57D\uC18D(t) ? Math.max(a, \uB0B8\uC2DC\uAC01(t)) : a, 0);
     const \uC2DC\uC791 = Math.max(\uC8FC\uC77C\uB9C8\uAC10(\uC9C0\uB09C\uC8FC\uC77C), \uB9C8\uC9C0\uB9C9\uB0A9\uBD80);
     const \uB05D = \uC8FC\uC77C\uB9C8\uAC10(nextSun);
-    const \uC774\uBC88\uBAAB = tAll.filter((t) => \uC218\uC785\uC904(t) && \uC7B0\uC2DC\uAC01(t) > \uC2DC\uC791 && \uC7B0\uC2DC\uAC01(t) <= \uB05D);
+    const \uADF8\uC8FC\uC77C = (iso) => \uB0A0\uB354\uD574(iso, (7 - (/* @__PURE__ */ new Date(iso + "T00:00:00Z")).getUTCDay()) % 7);
+    const \uADF8\uC8FC\uC5D0\uB0C4 = (t) => tAll.some((p) => \uC2ED\uC77C\uC870\uC904(p) && p.d >= t.d && p.d <= \uADF8\uC8FC\uC77C(t.d));
+    const \uB2A6\uAC8C\uC801\uC74C = (t) => !t.fx && \uC7B0\uC2DC\uAC01(t) <= \uC2DC\uC791 && Number(t.ts) > \uC2DC\uC791 && !\uADF8\uC8FC\uC5D0\uB0C4(t);
+    const \uC774\uBC88\uBAAB = tAll.filter((t) => \uC218\uC785\uC904(t) && (\uC7B0\uC2DC\uAC01(t) > \uC2DC\uC791 && \uC7B0\uC2DC\uAC01(t) <= \uB05D || \uB2A6\uAC8C\uC801\uC74C(t) && Number(t.ts) <= \uB05D));
     const weekIncome = \uC774\uBC88\uBAAB.reduce((a, t) => a + t.amt, 0);
     const \uB0A9\uBD80\uC801\uC740\uB54C = tAll.reduce((a, t) => \uC2ED\uC77C\uC870\uC904(t) && t.d <= todayISO && !\uC544\uC9C1\uC57D\uC18D(t) ? Math.max(a, Number(t.ts) || 0) : a, 0);
     const \uB354\uD55C\uBAAB = \uB354\uD55C\uB3C8.filter((t) => t.d <= nextSun && (t.ts ? \uB0A9\uBD80\uC801\uC740\uB54C < Number(t.ts) : \uC7B0\uC2DC\uAC01(t) > \uC2DC\uC791 && \uC7B0\uC2DC\uAC01(t) <= \uB05D));
@@ -3962,7 +3965,7 @@ h4{font-size:17px;font-weight:800;margin:22px 0 2px;}
     const \uBAAB\uC904 = \uC904\uB85C(\uC774\uBC88\uBAAB);
     const \uB0B8\uBAAB = \uB9C8\uC9C0\uB9C9\uB0A9\uBD80 > \uC8FC\uC77C\uB9C8\uAC10(\uC9C0\uB09C\uC8FC\uC77C) ? tAll.filter((t) => \uC218\uC785\uC904(t) && \uC7B0\uC2DC\uAC01(t) > \uC8FC\uC77C\uB9C8\uAC10(\uC9C0\uB09C\uC8FC\uC77C) && \uC7B0\uC2DC\uAC01(t) <= \uB9C8\uC9C0\uB9C9\uB0A9\uBD80) : [];
     const \uB0B8\uBAAB\uC904 = \uC904\uB85C(\uB0B8\uBAAB);
-    const \uB2E4\uC74C\uBAAB = tAll.filter((t) => \uC218\uC785\uC904(t) && \uC7B0\uC2DC\uAC01(t) > Math.max(\uB05D, \uB9C8\uC9C0\uB9C9\uB0A9\uBD80));
+    const \uB2E4\uC74C\uBAAB = tAll.filter((t) => \uC218\uC785\uC904(t) && (\uC7B0\uC2DC\uAC01(t) > Math.max(\uB05D, \uB9C8\uC9C0\uB9C9\uB0A9\uBD80) || \uB2A6\uAC8C\uC801\uC74C(t) && Number(t.ts) > Math.max(\uB05D, \uB9C8\uC9C0\uB9C9\uB0A9\uBD80)));
     const \uB2E4\uC74C\uBAAB\uC904 = \uC904\uB85C(\uB2E4\uC74C\uBAAB);
     const \uC8FC\uC77C\uC774\uB0D0 = (iso) => (/* @__PURE__ */ new Date(iso + "T00:00:00Z")).getUTCDay() === 0;
     const \uC61B\uC7B0 = (t) => \uC8FC\uC77C\uC774\uB0D0(t.d) && t.ts && \uD55C\uAD6D\uB0A0(t.ts) <= \uB0A0\uB354\uD574(t.d, 7) ? t.ts : \uB0A0\uC815\uC624(t.d);
@@ -4022,6 +4025,8 @@ h4{font-size:17px;font-weight:800;margin:22px 0 2px;}
       addRows: \uC904\uB85C(\uB354\uD55C\uBAAB),
       // 직접 더한 십일조 (2026-10-30)
       addSum: \uB354\uD55C\uD569,
+      lateIds: \uC774\uBC88\uBAAB.concat(\uB2E4\uC74C\uBAAB).filter(\uB2A6\uAC8C\uC801\uC74C).map((t) => t.id || ""),
+      // 뒤늦게 적어 넘어온 줄 (2026-11-03) — 적는 자리에서 「그 주에 냈어?」
       planned: \uC801\uC5B4\uB454\uAC83,
       // 그 주일 자로 이미 적어 두신 것
       /* ⛔ **내신 뒤에 「들어온 돈이 0원」이라 말하지 않는다** (2026-08-16 검사 중에 잡음).
@@ -5458,7 +5463,7 @@ h4{font-size:17px;font-weight:800;margin:22px 0 2px;}
   }
 
   // keep/sw-entry.js
-  var \uD310 = "f5aa952c40e7";
+  var \uD310 = "4c0a3a7e920e";
   var \uB2F4\uC744\uAC83 = define_KEEP_PRECACHE_default;
   var \uD1B5 = "igp-keep-" + \uD310;
   self.addEventListener("install", (e) => {

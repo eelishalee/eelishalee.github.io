@@ -3385,7 +3385,7 @@ async function saveOne() {
     render();
     /* 수입을 적었으면 그 자리에서 십일조를 묻는다 — 나중에 찾아가라고 하면 안 적는다.
        ⛔ 잔돈까지 매번 물으면 성가시다. 만원부터 묻는다. */
-    if (k === 'in' && amt >= TITHE_MIN && !십일조바탕아님(cat)) setTimeout(() => askTithe(amt), 420);
+    if (k === 'in' && amt >= TITHE_MIN && !십일조바탕아님(cat)) setTimeout(() => askTithe(amt, tx), 420);
   } catch (e) {
     toast(e.message || '못 적었어요');
     /* 다시 눌러 봐야 또 막힌다 — 알림이 지나간 뒤에 결제 창을 연다 */
@@ -6760,16 +6760,38 @@ const TITHE_MIN = 10000;
 /* ⛔ 환급·돌려받은 돈은 십일조 바탕이 아니다 (사장님 2026-09-15 : 「환급하고 돈돌려받은것은 십일조에서 빼도돼」).
    서버(api/ledger.js 의 바탕아님)와 **같은 글자**로 가른다. 여기서 안 막으면 환급을 적자마자 「십일조 떼어둘까」가 뜬다. */
 const 십일조바탕아님 = (cat) => /환급|돌려받|빌려|갚/.test(String(cat || ''));
-function askTithe(amt) {
+function askTithe(amt, 줄) {
   if (((D.cfg || {}).titheOn) === false) return;
   const t = Math.floor(amt / 10);
   if (t <= 0) return;
   const payOn = ((D && D.tithe) || {}).payOn || D.today;
+  /* 🔴 **지난 주 돈을 뒤늦게 적었으면 「그 주에 냈어?」 하나만 묻는다** (사장님 2026-11-03 : 「냈었는데 뒤늦게 적는경우도」).
+     서버가 이번 주일 몫으로 넘긴 줄(lateIds)일 때만이다. 그 주에 낸 십일조가 장부에 있으면 서버가 안 넘겨서 묻지도 않는다.
+     「냈어」 = 십일조 셈에서만 뺌(op nt · 잔액은 그대로) · 「아직」 = 그대로 이번 주일 몫. */
+  const 늦음 = 줄 && (((D.tithe || {}).lateIds) || []).indexOf(줄.id) >= 0;
+  if (늦음) {
+    pop('그 주에 십일조 냈어?',
+      '<div class="u2sub">' + md(줄.d) + '에 들어온 ' + won(amt) + '원이야.</div>'
+      + '<div class="u2sub">냈으면 빼 두고, 아직이면 ' + md(payOn) + ' 십일조에 ' + won(t) + '원 넣어 둘게.</div>'
+      + '<div class="u2btns" style="margin-top:16px"><button class="ghost" id="tiYet">아직</button>'
+      +   '<button class="go" id="tiPaid">냈어</button></div>',
+    (el, close) => {
+      $('#tiYet', el).onclick = () => close();
+      $('#tiPaid', el).onclick = async () => {
+        close();
+        try {
+          D = await api('tx', { body: { op: 'nt', tx: { id: 줄.id, m: String(줄.d).slice(0, 7), nt: true, viewM: M } } });
+          M = D.m || M; render(); toast('십일조에서 뺐어');
+        } catch (e) { toast(e.message); }
+      };
+    });
+    return;
+  }
   pop('십일조 떼어둘까',
     '<div class="u2sub">방금 들어온 <b>' + won(amt) + '원</b>의 십분의 일은 <b>'
     +   won(t) + '원</b>이야.</div>'
     + '<div class="u2tithe-v">' + won(t) + '원</div>'
-    + '<div class="u2sub">지금 안 적어도 이 달 십일조 칸에서 계속 세고 있어.</div>'
+    + '<div class="u2sub">지금 안 적어도 ' + md(payOn) + ' 십일조에 들어가 있어.</div>'
     + '<div class="u2btns" style="margin-top:16px"><button class="ghost" data-x>나중에</button>'
     +   '<button class="go" id="tiNow">지금 적기</button></div>',
   (el, close) => {
