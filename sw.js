@@ -5288,6 +5288,7 @@ h4{font-size:17px;font-weight:800;margin:22px 0 2px;}
         const pairs = [];
         const froms = /* @__PURE__ */ new Set();
         let dropped = 0;
+        const \uB418\uC0B4\uB9B4\uCE78 = /* @__PURE__ */ new Set([K.cfg, K.fixed, K.rev, K.nsBest, K.nsRun, K.nsLog, K.use, K.bills, K.checks, K.tadd]);
         for (const [k, v] of Object.entries(kv)) {
           const m = /^lb:([A-Za-z0-9_]+):(.+)$/.exec(String(k));
           if (!m) {
@@ -5295,7 +5296,14 @@ h4{font-size:17px;font-weight:800;margin:22px 0 2px;}
             continue;
           }
           froms.add(m[1]);
-          pairs.push([`lb:${ws}:${m[2]}`, v]);
+          const \uD0A4 = `lb:${ws}:${m[2]}`;
+          const \uB2EC = /(d{4}-d{2})$/.exec(m[2]);
+          const \uBC1B\uC74C = \uB418\uC0B4\uB9B4\uCE78.has(\uD0A4) || \uB2EC && isMonth(\uB2EC[1]) && [K.tx(\uB2EC[1]), K.sum(\uB2EC[1]), K.mat(\uB2EC[1]), K.note(\uB2EC[1])].includes(\uD0A4);
+          if (!\uBC1B\uC74C || pairs.length >= 3e3) {
+            dropped++;
+            continue;
+          }
+          pairs.push([\uD0A4, v]);
         }
         if (froms.size > 1) {
           return res.status(400).json({
@@ -5449,7 +5457,7 @@ h4{font-size:17px;font-weight:800;margin:22px 0 2px;}
   }
 
   // keep/sw-entry.js
-  var \uD310 = "c47c9644f1cd";
+  var \uD310 = "1ab57366f229";
   var \uB2F4\uC744\uAC83 = define_KEEP_PRECACHE_default;
   var \uD1B5 = "igp-keep-" + \uD310;
   self.addEventListener("install", (e) => {

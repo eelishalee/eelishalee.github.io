@@ -2608,7 +2608,7 @@ function 완납칸(d) {
      앞서는 총액이 비면 다달이 금액을 그 자리에 적었다 — 12개월 100,000원짜리가 「100,000원」으로 보여,
      다 갚은 것이 얼마짜리였는지가 열두 배 작게 읽혔다. 개월수도 모르면 그때만 다달이 금액을 적는다. */
   const 총액 = (f) => {
-    const t = f.inst && Number(String(f.inst.total).replace(/[^d]/g, ''));
+    const t = f.inst && Number(String(f.inst.total).replace(/[^\d]/g, ''));
     if (t > 0) return t;
     const n = 할부개월(f);
     return n ? (Number(f.amt) || 0) * n : (Number(f.amt) || 0);
@@ -5061,10 +5061,10 @@ function 십일조내역() {
       + '<div class="u2btns"><button class="go" id="taSave">더하기</button></div>',
     (el2, close2) => {
       const 금 = $('#taAmt', el2);
-      금.oninput = () => { const v = Number(금.value.replace(/[^d]/g, '')) || 0; 금.value = v ? won(v) : ''; };
+      금.oninput = () => { const v = Number(금.value.replace(/[^\d]/g, '')) || 0; 금.value = v ? won(v) : ''; };
       setTimeout(() => 금.focus(), 50);
       $('#taSave', el2).onclick = () => {
-        const amt = Number(금.value.replace(/[^d]/g, '')) || 0;
+        const amt = Number(금.value.replace(/[^\d]/g, '')) || 0;
         if (amt <= 0) { toast('금액을 넣어 줘'); return; }
         const d = $('#taDate', el2).value || D.today;
         close2();
