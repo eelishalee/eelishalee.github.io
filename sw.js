@@ -3956,7 +3956,7 @@ h4{font-size:17px;font-weight:800;margin:22px 0 2px;}
     const \uC774\uBC88\uBAAB = tAll.filter((t) => \uC218\uC785\uC904(t) && \uC7B0\uC2DC\uAC01(t) > \uC2DC\uC791 && \uC7B0\uC2DC\uAC01(t) <= \uB05D);
     const weekIncome = \uC774\uBC88\uBAAB.reduce((a, t) => a + t.amt, 0);
     const \uB0A9\uBD80\uC801\uC740\uB54C = tAll.reduce((a, t) => \uC2ED\uC77C\uC870\uC904(t) && t.d <= todayISO && !\uC544\uC9C1\uC57D\uC18D(t) ? Math.max(a, Number(t.ts) || 0) : a, 0);
-    const \uB354\uD55C\uBAAB = \uB354\uD55C\uB3C8.filter((t) => \uC7B0\uC2DC\uAC01(t) > \uC2DC\uC791 && \uC7B0\uC2DC\uAC01(t) <= \uB05D && !(t.ts && \uB0A9\uBD80\uC801\uC740\uB54C >= Number(t.ts)));
+    const \uB354\uD55C\uBAAB = \uB354\uD55C\uB3C8.filter((t) => t.d <= nextSun && (t.ts ? \uB0A9\uBD80\uC801\uC740\uB54C < Number(t.ts) : \uC7B0\uC2DC\uAC01(t) > \uC2DC\uC791 && \uC7B0\uC2DC\uAC01(t) <= \uB05D));
     const \uB354\uD55C\uD569 = \uB354\uD55C\uBAAB.reduce((a, t) => a + t.amt, 0);
     const \uC904\uB85C = (list) => list.slice().sort((a, b) => a.d < b.d ? 1 : a.d > b.d ? -1 : 0).slice(0, 10).map((t) => Object.assign({ id: t.id || "", d: t.d, amt: t.amt, cat: t.cat || "", memo: t.memo || "" }, t.ta ? { ta: 1 } : {}));
     const \uBAAB\uC904 = \uC904\uB85C(\uC774\uBC88\uBAAB);
