@@ -2148,8 +2148,9 @@ function tithe(d) {
           같이 적히는 것은 적기 창의 알약이 이미 보여준다. */
     + '<div class="u2tithe-btns">'
     +   '<button class="ghost" data-tithe="list">내역</button>'
-    +   '<button class="go" data-tithe="pay"' + (더할것 || 헌금합 ? '' : ' disabled') + '>'
-    +     (더할것 ? won(더할것) + '원 적기' : (헌금합 ? (헌금.length > 1 ? '헌금' : esc(헌금[0].name)) + ' ' + won(헌금합) + '원 적기' : '낼 것 없어'))
+       /* ⛔ 낼 것이 없어도 단추는 켠다 — 지난 주일에 낸 것을 뒤늦게 적는 길 (사장님 2026-11-02 : 「11/1에 낸것이 안적혀」) */
+    +   '<button class="go" data-tithe="pay">'
+    +     (더할것 ? won(더할것) + '원 적기' : (헌금합 ? (헌금.length > 1 ? '헌금' : esc(헌금[0].name)) + ' ' + won(헌금합) + '원 적기' : '낸 것 적기'))
     +   '</button>'
     + '</div></div>';
 }
@@ -4830,19 +4831,24 @@ function 십일조적기() {
         다음 날 저절로 들어오지 않는다(op skip).
      ⛔ 창을 아예 안 여시면 주일이 지난 다음 날 저절로 적힌다(서버 십일조랑같이). */
   const 헌금 = (t.offer || []).map((x) => Object.assign({ on: true }, x));
-  if (더할것 <= 0 && !헌금.length) { toast('낼 것이 없어'); return; }
-  const 날 = t.payOn || D.today;
+  /* ⛔ 낼 것이 0 이어도 창은 연다 — 지난 주일에 낸 것을 뒤늦게 적는 길이다 (사장님 2026-11-02 : 「11/1에 낸것이 안적혀」).
+     예전엔 날짜가 늘 다가오는 주일(payOn)로 박혀 있어서, 월요일에 어제 낸 것을 어제 자로 적을 수가 없었다. */
+  const 다가올 = t.payOn || D.today;
+  const 지난 = new Date(Date.parse(다가올 + 'T00:00:00Z') - 7 * 86400e3).toISOString().slice(0, 10);
+  let 날 = 다가올;
   const 알약 = () => 헌금.map((x, i) => '<button type="button" class="chip' + (x.on ? ' on' : '')
     + '" data-offer="' + i + '">' + esc(x.name) + ' ' + won(x.amt) + '원</button>').join('');
   /* ⛔ 줄 번호를 **여기서 정해** 보낸다. 서버가 정하게 두면 되돌리기가 「같은 날·같은 헌금」으로 찾다가
      먼저 적혀 있던 줄을 지울 수 있다(교차검증 2026-09-14). */
   const 새번호 = () => 'w' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
   pop('십일조 적기',
-    '<div class="u2sub" style="margin-bottom:12px">' + md(날) + ' 자로 적어 둘게.<br>'
-    +   '봉투에 넣는 날이 그 주일이니까.</div>'
-    + (더할것 > 0 ? '<div class="u2fld"><label>십일조</label>'
-      +   '<input id="thAmt" inputmode="numeric" value="' + won(더할것) + '"></div>' : '')
-    + (헌금.length ? '<div class="u2fld"><label>같이 적을 것 '
+    '<div class="u2fld"><label>낸 주일</label><div class="chips" id="thDay">'
+    +   '<button type="button" class="chip" data-thd="' + 지난 + '">' + md(지난) + ' 지난 주일</button>'
+    +   '<button type="button" class="chip on" data-thd="' + 다가올 + '">' + md(다가올) + ' 이번 주일</button>'
+    + '</div></div>'
+    + '<div class="u2fld"><label>십일조</label>'
+    +   '<input id="thAmt" inputmode="numeric" placeholder="0" value="' + (더할것 > 0 ? won(더할것) : '') + '"></div>'
+    + (헌금.length ? '<div class="u2fld" id="thOfferF"><label>같이 적을 것 '
       +   '<span style="font-weight:400;color:var(--faint)">이번 주에 안 냈으면 눌러서 빼</span></label>'
       +   '<div class="chips" id="thOffer">' + 알약() + '</div></div>' : '')
     + '<div class="u2btns"><button class="ghost" data-x>그만</button>'
@@ -4850,6 +4856,13 @@ function 십일조적기() {
   (el, close) => {
     const inp = $('#thAmt', el);
     if (inp) inp.oninput = () => { const n = inp.value.replace(/[^0-9]/g, ''); inp.value = n ? won(n) : ''; };
+    /* 지난 주일을 고르면 같이 적을 헌금(이번 주일 몫)은 숨기고 건드리지 않는다 */
+    $('#thDay', el).onclick = (e) => {
+      const b = e.target.closest('[data-thd]'); if (!b) return;
+      날 = b.dataset.thd;
+      $('#thDay', el).querySelectorAll('[data-thd]').forEach((x) => x.classList.toggle('on', x === b));
+      const f = $('#thOfferF', el); if (f) f.style.display = 날 === 다가올 ? '' : 'none';
+    };
     const box = $('#thOffer', el);
     if (box) box.onclick = (e) => {
       const b = e.target.closest('[data-offer]'); if (!b) return;
@@ -4857,7 +4870,8 @@ function 십일조적기() {
     };
     $('#thGo', el).onclick = async () => {
       const amt = inp ? (Number(inp.value.replace(/[^0-9]/g, '')) || 0) : 0;
-      const 고른것 = 헌금.filter((x) => x.on), 뺀것 = 헌금.filter((x) => !x.on);
+      const 이번 = 날 === 다가올;
+      const 고른것 = 이번 ? 헌금.filter((x) => x.on) : [], 뺀것 = 이번 ? 헌금.filter((x) => !x.on) : [];
       if (!amt && !고른것.length && !뺀것.length) { toast('금액을 적어 줘'); return; }
       close();
       /* ⚡ 화면 먼저 (2026-09-17 · 「어느곳도 느리면안돼」) — 적을 줄을 다 만들어 한 번에 그리고,
@@ -4870,7 +4884,9 @@ function 십일조적기() {
       고른것.forEach((x) => 줄들.push({ tx: { id: 새번호(), d: 날, k: 'out', amt: String(x.amt),
         cat: x.cat || '고정지출', pay: x.pay || '', memo: x.name, fx: x.id }, 말: x.name + ' ' + won(x.amt) + '원' }));
       const 적은것 = 줄들.map((x) => x.tx.id), 적은말 = 줄들.map((x) => x.말), 뺀말 = 뺀것.map((x) => x.name);
-      const 헌금번호 = 헌금.map((x) => x.id);
+      const 헌금번호 = 이번 ? 헌금.map((x) => x.id) : [];
+      /* 앞날 자로 적으면 「적어 두셨어요」(약속) · 지난 날·오늘 자로 적으면 낸 것이라 낼 것에서 바로 뺀다 */
+      const 약속 = 날 > D.today;
       const 옛헌금 = ((D.tithe || {}).offer || []).filter((o) => 헌금번호.indexOf(o.id) >= 0);
       let 걷은예정 = [];
       const 되돌림 = 먼저그리기((d) => {
@@ -4882,7 +4898,8 @@ function 십일조적기() {
         const t = d.tithe;
         if (t) {
           t.offer = (t.offer || []).filter((o) => 헌금번호.indexOf(o.id) < 0);
-          if (amt) t.planned = (Number(t.planned) || 0) + amt;
+          if (amt && 약속) t.planned = (Number(t.planned) || 0) + amt;
+          else if (amt) t.left = Math.max(0, (Number(t.left) || 0) - amt);
         }
         const fs = d.fixedStat || {};
         const 걷을 = (u) => u.d === 날 && 헌금번호.indexOf(u.id) >= 0;
@@ -4918,7 +4935,8 @@ function 십일조적기() {
           const t = d.tithe;
           if (t) {
             t.offer = (t.offer || []).concat(옛헌금.filter((o) => !(t.offer || []).some((x) => x.id === o.id)));
-            if (amt) t.planned = Math.max(0, (Number(t.planned) || 0) - amt);
+            if (amt && 약속) t.planned = Math.max(0, (Number(t.planned) || 0) - amt);
+            else if (amt) t.left = (Number(t.left) || 0) + amt;
           }
           const fs = d.fixedStat || {};
           if (fs.upcoming) fs.upcoming = fs.upcoming.concat(걷은예정).sort((a, b) => (a.d < b.d ? -1 : 1));
