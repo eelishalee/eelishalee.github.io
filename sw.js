@@ -5311,7 +5311,7 @@ h4{font-size:17px;font-weight:800;margin:22px 0 2px;}
           }
           froms.add(m[1]);
           const \uD0A4 = `lb:${ws}:${m[2]}`;
-          const \uB2EC = /(d{4}-d{2})$/.exec(m[2]);
+          const \uB2EC = /(\d{4}-\d{2})$/.exec(m[2]);
           const \uBC1B\uC74C = \uB418\uC0B4\uB9B4\uCE78.has(\uD0A4) || \uB2EC && isMonth(\uB2EC[1]) && [K.tx(\uB2EC[1]), K.sum(\uB2EC[1]), K.mat(\uB2EC[1]), K.note(\uB2EC[1])].includes(\uD0A4);
           if (!\uBC1B\uC74C || pairs.length >= 3e3) {
             dropped++;
