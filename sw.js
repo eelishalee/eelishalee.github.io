@@ -3898,6 +3898,8 @@ h4{font-size:17px;font-weight:800;margin:22px 0 2px;}
     const cardsP = cardBills(K, cfg, today10(), billsRaw || {}, fixed, m);
     const back3 = months.filter((x) => x <= cur).slice(-3);
     const tBack = back3;
+    const \uB2E4\uC74C\uB2EC = shiftM(cur, 1);
+    const \uB2E4\uC74C\uB2EC\uC77D\uAE30 = months.includes(\uB2E4\uC74C\uB2EC) ? [\uB2E4\uC74C\uB2EC] : [];
     const holdBack = (() => {
       const t = Number((cfg.hold || {}).haveAt) || 0;
       if (!t) return [];
@@ -3905,7 +3907,7 @@ h4{font-size:17px;font-weight:800;margin:22px 0 2px;}
       const from = shiftM(cur, -Math.min(HOLD_BACK_MAX, monthGap(hm, cur)));
       return months.filter((x) => x >= from && x <= cur);
     })();
-    const wantTx = [...new Set(tBack.concat(back3, holdBack, [cur]))].filter((x) => x !== m);
+    const wantTx = [...new Set(tBack.concat(back3, holdBack, [cur], \uB2E4\uC74C\uB2EC\uC77D\uAE30))].filter((x) => x !== m);
     const [sums, gotTx] = await Promise.all([
       mget(prev.map(K.sum)),
       wantTx.length ? mget(wantTx.map(K.tx)).then((a) => a.map((x) => \uACB9\uCE5C\uC790\uB3D9\uC904\uBE7C\uAE30(x || []).tx)) : Promise.resolve([])
@@ -3933,7 +3935,11 @@ h4{font-size:17px;font-weight:800;margin:22px 0 2px;}
       if (s) carry += (s.in || 0) - (s.out || 0);
     });
     const \uB354\uD55C\uB3C8 = (Array.isArray(taddRaw) ? taddRaw : []).map((x) => ({ id: x.id, d: x.d, amt: money(x.amt), memo: x.memo || "", cat: "\uC9C1\uC811 \uB354\uD55C \uC2ED\uC77C\uC870", ts: x.ts, ta: 1 }));
-    const tAll = [].concat(...tBack.map((x) => txCache[x] || []));
+    const \uC5FF\uC0C8\uB4A4 = new Date(Date.parse(today10() + "T00:00:00Z") + 6 * 864e5).toISOString().slice(0, 10);
+    const tAll = [].concat(
+      ...tBack.map((x) => txCache[x] || []),
+      ...\uB2E4\uC74C\uB2EC\uC77D\uAE30.map((x) => (txCache[x] || []).filter((t) => t.d <= \uC5FF\uC0C8\uB4A4))
+    );
     const todayISO = today10();
     const \uBC14\uD0D5\uC544\uB2D8 = (t) => !!(t && t.nt) || /환급|돌려받|빌려|갚/.test(String(t && t.cat || ""));
     const \uC218\uC785\uC904 = (t) => t.k === "in" && !\uBC14\uD0D5\uC544\uB2D8(t);
@@ -3970,13 +3976,15 @@ h4{font-size:17px;font-weight:800;margin:22px 0 2px;}
     const \uC8FC\uC77C\uC774\uB0D0 = (iso) => (/* @__PURE__ */ new Date(iso + "T00:00:00Z")).getUTCDay() === 0;
     const \uC61B\uC7B0 = (t) => \uC8FC\uC77C\uC774\uB0D0(t.d) && t.ts && \uD55C\uAD6D\uB0A0(t.ts) <= \uB0A0\uB354\uD574(t.d, 7) ? t.ts : \uB0A0\uC815\uC624(t.d);
     const \uC61B\uB0B8 = (t) => t.d > todayISO || \uC544\uC9C1\uC57D\uC18D(t) ? \uC8FC\uC77C\uB9C8\uAC10(t.d) : \uC8FC\uC77C\uC774\uB0D0(t.d) && t.ts && \uD55C\uAD6D\uB0A0(t.ts) !== t.d ? \uC8FC\uC77C\uB9C8\uAC10(t.d) : \uC61B\uC7B0(t);
+    const \uB2A6\uC740\uBC14\uD0D5 = (u) => !u.fx && !u.nt && !\uC8FC\uC77C\uC774\uB0D0(u.d) && Number(u.ts) > \uC8FC\uC77C\uB9C8\uAC10(\uADF8\uC8FC\uC77C(u.d)) && !\uADF8\uC8FC\uC5D0\uB0C4(u);
+    const \uBC14\uD0D5\uC2DC\uAC01 = (u) => \uB2A6\uC740\uBC14\uD0D5(u) ? Number(u.ts) : \uC61B\uC7B0(u);
     const \uB0B8\uC904\uB4E4 = tAll.filter(\uC2ED\uC77C\uC870\uC904).map((t) => ({ t, \uB05D: \uC61B\uB0B8(t) })).sort((x, y) => x.\uB05D - y.\uB05D);
     const \uB0B8\uBC14\uD0D5 = \uB0B8\uC904\uB4E4.map((x, i) => {
       const \uBD80\uD130 = Math.max(
         \uC8FC\uC77C\uB9C8\uAC10(\uB0A0\uB354\uD574(x.t.d, -((/* @__PURE__ */ new Date(x.t.d + "T00:00:00Z")).getUTCDay() || 7))),
         i ? \uB0B8\uC904\uB4E4[i - 1].\uB05D : 0
       );
-      const \uB3C8 = tAll.filter((u) => \uC218\uC785\uC904(u) && \uC61B\uC7B0(u) > \uBD80\uD130 && \uC61B\uC7B0(u) <= x.\uB05D);
+      const \uB3C8 = tAll.filter((u) => \uC218\uC785\uC904(u) && \uBC14\uD0D5\uC2DC\uAC01(u) > \uBD80\uD130 && \uBC14\uD0D5\uC2DC\uAC01(u) <= x.\uB05D);
       return { t: x.t, \uB3C8 };
     }).filter((x) => String(x.t.d).slice(0, 7) === m && x.\uB3C8.length).map((x) => ({
       id: x.t.id || "",
