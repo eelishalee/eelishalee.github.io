@@ -3896,8 +3896,8 @@ h4{font-size:17px;font-weight:800;margin:22px 0 2px;}
     const months = monthsRaw || [];
     const prev = months.filter((x) => x < m && x >= (cfg.openingMonth || "0000-00"));
     const cardsP = cardBills(K, cfg, today10(), billsRaw || {}, fixed, m);
-    const tBack = months.filter((x) => x <= m).slice(-3);
     const back3 = months.filter((x) => x <= cur).slice(-3);
+    const tBack = back3;
     const holdBack = (() => {
       const t = Number((cfg.hold || {}).haveAt) || 0;
       if (!t) return [];
@@ -3933,7 +3933,7 @@ h4{font-size:17px;font-weight:800;margin:22px 0 2px;}
       if (s) carry += (s.in || 0) - (s.out || 0);
     });
     const \uB354\uD55C\uB3C8 = (Array.isArray(taddRaw) ? taddRaw : []).map((x) => ({ id: x.id, d: x.d, amt: money(x.amt), memo: x.memo || "", cat: "\uC9C1\uC811 \uB354\uD55C \uC2ED\uC77C\uC870", ts: x.ts, ta: 1 }));
-    const tAll = [].concat(...tBack.map((x) => txCache[x] || []), tBack.includes(m) ? [] : tx);
+    const tAll = [].concat(...tBack.map((x) => txCache[x] || []));
     const todayISO = today10();
     const \uBC14\uD0D5\uC544\uB2D8 = (t) => !!(t && t.nt) || /환급|돌려받|빌려|갚/.test(String(t && t.cat || ""));
     const \uC218\uC785\uC904 = (t) => t.k === "in" && !\uBC14\uD0D5\uC544\uB2D8(t);
